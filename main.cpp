@@ -62,6 +62,7 @@ public:
 		{
 			departureTime[counter] = 0;
 			arrivalTime[counter] = 0;
+			date[counter] = 0;
 		}
 	}
 	Flight(Ticket* newArr, string newAirline, string newCountry,
@@ -78,6 +79,7 @@ public:
 		{
 			departureTime[counter] = newDeptTime[counter];
 			arrivalTime[counter] = newArrTime[counter];
+			date[counter] = newDates[counter];
 		}
 	}
 
@@ -127,7 +129,36 @@ public:
 	}
 
 	// Getters
-}
+	Ticket* getTickets()
+	{
+		return ticketArray;
+	}
+	string getAirline()
+	{
+		return airline;
+	}
+	string getCountry()
+	{
+		return country;
+	}
+	char getStatusOfFlight()
+	{
+		return statusOfFlight;
+	}
+	char getType()
+	{
+		return type;
+	}
+	int getAvailableTickets()
+	{
+		return availableTickets;
+	}
+	int getFlightNumber()
+	{
+		return flightNumber;
+	}
+	
+};
 int main ()
 {
     cout << "Hello World \n";
