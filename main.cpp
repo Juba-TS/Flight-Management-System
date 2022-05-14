@@ -6,7 +6,7 @@ int main ()
 {
     cout << "Hello World \n";
     
-    
+    yes
     
     return o;
 }
