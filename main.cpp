@@ -244,23 +244,99 @@ public:
 		seconds = newSeconds;
 	}
 };
-class Flight
+class Airline
+{
+private:
+	string airlineName;
+	int airlineID;
+public:
+	Airline()
+	{
+		airlineName = '\0';
+		airlineID = 0;
+	}
+	Airline(string newName, int newID)
+	{
+		airlineName = newName;
+		airlineID = newID;
+	}
+	void setAirlineName(string newName)
+	{
+		airlineName = newName;
+	}
+	void setAirlineID(int newID)
+	{
+		airlineID = newID;
+	}
+	string getAirlineName()
+	{
+		return airlineName;
+	}
+	int getAirlineID()
+	{
+		return airlineID;
+	}
+};
+class InternationalFlight :virtual public Airline 
+{
+private:
+	string country;
+public:
+	InternationalFlight() : Airline()
+	{
+		country = '\0';
+	}
+	InternationalFlight(string newName, int newID, string newCountry = '\0') : Airline(newName, newID)
+	{
+		country = newCountry;
+	}
+	void setCountry(string newCountry)
+	{
+		country = newCountry;
+	}
+	string getCountry()
+	{
+		return country;
+	}
+};
+class LocalFlight : virtual public Airline 
+{
+private: 
+	string city;
+public:
+	LocalFlight() : Airline()
+	{
+		city = '\0';
+	}
+	/*LocalFlight(string newName, int newID) : Airline(newName, newID);*/
+	LocalFlight(string newName, int newID, string newCity = '\0') : Airline(newName, newID)
+	{
+		city = newCity;
+	}
+	void setCity(string newCity)
+	{
+		city = newCity;
+	}
+	string getCity()
+	{
+		return city;
+	}
+};
+class Plane : public InternationalFlight, public LocalFlight
 {
 private:
 	Ticket* ticketArray;
-	string country;
 	char statusOfFlight;	//O for ontime, D for delayed, M for Missed
 	char type;	// D for domestic I for international
 	int availableTickets;
 	int flightNumber;
-	Time departureTime;	
+	Time departureTime;
 	Time arrivalTime;
 	Date flightDate;
 public:
-	Flight()
+	Plane()
 	{
 		ticketArray = NULL;
-		country = '\0';
 		statusOfFlight = '\0';
 		type = '\0';
 		availableTickets = 0;
@@ -275,11 +351,10 @@ public:
 		arrivalTime.minutes = 0;
 		arrivalTime.seconds = 0;
 	}
-	Flight(Ticket* newArr, string newAirline, string newCountry,
-		char newStatus, char newType, int newTickets, int newFlightNumber, Time newDeptTime, Time newArrTime,Date newDate)
+	Plane(Ticket* newArr, char newStatus, char newType, int newTickets, int newFlightNumber, Time newDeptTime, Time newArrTime, Date newDate,string newName,
+		int newID): InternationalFlight(newName, newID), LocalFlight(newName,newID)
 	{
 		ticketArray = newArr;
-		country = newCountry;
 		statusOfFlight = newStatus;
 		type = newType;
 		availableTickets = newTickets;
@@ -299,10 +374,6 @@ public:
 	void setTicketArr(Ticket* newArr)
 	{
 		ticketArray = newArr;
-	}
-	void setCountry(string newCountry)
-	{
-		country = newCountry;
 	}
 	void setStatusOfFlight(char newStatus)
 	{
@@ -344,10 +415,6 @@ public:
 	{
 		return ticketArray;
 	}
-	string getCountry()
-	{
-		return country;
-	}
 	char getStatusOfFlight()
 	{
 		return statusOfFlight;
@@ -375,93 +442,6 @@ public:
 	Date getDate()
 	{
 		return flightDate;
-	}
-};
-class InternationalFlight :public Flight 
-{
-
-};
-class LocalFlight : public Flight 
-{
-
-};
-class Airline
-{
-private:
-	string airlineName;
-	int airlineID;
-public:
-	Airline()
-	{
-		airlineName = '\0';
-		airlineID = 0;
-	}
-	Airline(string newName, int newID)
-	{
-		airlineName = newName;
-		airlineID = newID;
-	}
-	void setAirlineName(string newAirline)
-	{
-		airlineName = newAirline;
-	}
-	void setAirlineID(int newID)
-	{
-		airlineID = newID;
-	}
-	string getAirlineName()
-	{
-		return airlineName;
-	}
-	int getAirlineID()
-	{
-		return airlineID;
-	}
-};
-class TurkishAirline : public Airline, public LocalFlight
-{
-private:
-public:
-	TurkishAirline(): Airline()
-	{
-
-	}
-	TurkishAirline(string newName, int newID) : Airline(newName, newID)
-	{
-
-	}
-};
-class PakistanAirline : public Airline, public LocalFlight
-{
-	PakistanAirline() : Airline()
-	{
-
-	}
-	PakistanAirline(string newName, int newID) : Airline(newName, newID)
-	{
-
-	}
-};
-class AmericanAirline : public Airline, public InternationalFlight
-{
-	AmericanAirline() : Airline()
-	{
-
-	}
-	AmericanAirline(string newName, int newID) : Airline(newName, newID)
-	{
-
-	}
-};
-class BritishAirline : public Airline, public InternationalFlight
-{
-	BritishAirline() : Airline()
-	{
-
-	}
-	BritishAirline(string newName, int newID) : Airline(newName, newID)
-	{
-
 	}
 };
 int main ()
