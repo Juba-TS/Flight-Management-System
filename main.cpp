@@ -1,5 +1,4 @@
 #include <iostream>
-
 using namespace std;
 
 class User
@@ -286,7 +285,7 @@ public:
 	{
 		country = '\0';
 	}
-	InternationalFlight(string newName, int newID, string newCountry = '\0') : Airline(newName, newID)
+	InternationalFlight(string newName, int newID, string newCountry = "Nothing set") : Airline(newName, newID)
 	{
 		country = newCountry;
 	}
@@ -308,8 +307,7 @@ public:
 	{
 		city = '\0';
 	}
-	/*LocalFlight(string newName, int newID) : Airline(newName, newID);*/
-	LocalFlight(string newName, int newID, string newCity = '\0') : Airline(newName, newID)
+	LocalFlight(string newName, int newID, string newCity = "Nothing set") : Airline(newName, newID)
 	{
 		city = newCity;
 	}
@@ -327,7 +325,6 @@ class Plane : public InternationalFlight, public LocalFlight
 private:
 	Ticket* ticketArray;
 	char statusOfFlight;	//O for ontime, D for delayed, M for Missed
-	char type;	// D for domestic I for international
 	int availableTickets;
 	int flightNumber;
 	Time departureTime;
@@ -338,7 +335,6 @@ public:
 	{
 		ticketArray = NULL;
 		statusOfFlight = '\0';
-		type = '\0';
 		availableTickets = 0;
 		flightNumber = 0;
 		flightDate.day = 0;
@@ -351,12 +347,11 @@ public:
 		arrivalTime.minutes = 0;
 		arrivalTime.seconds = 0;
 	}
-	Plane(Ticket* newArr, char newStatus, char newType, int newTickets, int newFlightNumber, Time newDeptTime, Time newArrTime, Date newDate,string newName,
+	Plane(Ticket* newArr, char newStatus, int newTickets, int newFlightNumber, Time newDeptTime, Time newArrTime, Date newDate,string newName,
 		int newID): InternationalFlight(newName, newID), LocalFlight(newName,newID)
 	{
 		ticketArray = newArr;
 		statusOfFlight = newStatus;
-		type = newType;
 		availableTickets = newTickets;
 		flightNumber = newFlightNumber;
 		flightDate.day = newDate.day;
@@ -378,10 +373,6 @@ public:
 	void setStatusOfFlight(char newStatus)
 	{
 		statusOfFlight = newStatus;
-	}
-	void setType(char newType)
-	{
-		type = newType;
 	}
 	void setAvailableTickets(int newAvailableTickets)
 	{
@@ -419,10 +410,6 @@ public:
 	{
 		return statusOfFlight;
 	}
-	char getType()
-	{
-		return type;
-	}
 	int getAvailableTickets()
 	{
 		return availableTickets;
@@ -444,11 +431,30 @@ public:
 		return flightDate;
 	}
 };
-int main ()
+
+int main()
 {
-    cout << "Hello World \n";
-    
-    yes
-    
-    return o;
+	// Testing definitions
+	Ticket* newArray = new Ticket[3];
+	Ticket* new2Array;
+	Time DeptTime, ArrTime;
+	ArrTime.hour = 1;
+	Date newDate;
+	for (int counter = 0;counter < 3;counter++)
+	{
+		newArray[counter].setID(counter);
+		newArray[counter].setPassportNumber(counter + 10);
+	}
+	Plane obj1(newArray,'O',15,500,DeptTime,ArrTime,newDate,"Turkish",300);
+	new2Array = obj1.getTickets();
+	for (int counter = 0;counter < 3;counter++)
+	{
+		cout << new2Array[counter].getID()<<"    "<<new2Array[counter].getPassportNumber() << endl;
+	}
+	cout << obj1.getAirlineID()<<"    " << obj1.getAirlineName() << endl;
+	cout << obj1.getCity() << "     " << obj1.getCountry() << endl;
+	cout << obj1.getAvailableTickets()<< endl;
+	cout << obj1.getFlightNumber() << "   " << obj1.getStatusOfFlight() << endl;
+
+	return 0;
 }
