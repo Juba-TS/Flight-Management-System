@@ -431,9 +431,46 @@ public:
 		return flightDate;
 	}
 };
+void MainMenu()
+{
+	system("CLS");
+	cout << "Welcome to the Flight Management System!!" << endl;
+	cout << endl;
+	cout << "Choose one of the options down below!" << endl;
+	cout << "1. For Admin" << endl;
+	cout << "2. For Passenger" << endl;
+	cout << "0. To exit the program" << endl;
+	cout << "=> ";
+}
 
+void AdminMenu()
+{
+	system("CLS");
+	cout << "Choose whatever you would like to do:" << endl;
+	cout << "1. Search through completed flights" << endl;
+	cout << "2. Add new flights to the database" << endl;
+	cout << "3. Remove flights from the database" << endl;
+	cout << "4. Edit details of a flight" << endl;
+	cout << "5. Display Passengers (Based on flight number, nationality or passport number)" << endl;
+	cout << "6. Search through flights" << endl;
+	cout << "=> ";
+}
+void PassengerMenu()
+{
+	system("CLS");
+	cout << "Choose whatever you would like to do:" << endl;
+	cout << "1. Display available flights" << endl;
+	cout << "2. Book a flight" << endl;
+	cout << "3. Edit your details (Passenger details)" << endl;
+	cout << "4. Search through flights" << endl;
+	cout << "=> ";
+}
 int main()
 {
+	// Testing everything
+	MainMenu();
+	AdminMenu();
+	PassengerMenu();
 	// Testing definitions
 	Ticket* newArray = new Ticket[3];
 	Ticket* new2Array;
