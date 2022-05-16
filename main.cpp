@@ -414,6 +414,14 @@ public:
 	{
 		return availableTickets;
 	}
+	int getUnbookedTickets()
+	{
+		int unbookedTickets = 0;
+		for (int counter = 0;counter < availableTickets - 1;counter++)
+			if (ticketArray[counter].getID() == 0)
+				unbookedTickets++;
+		return unbookedTickets;
+	}
 	int getFlightNumber()
 	{
 		return flightNumber;
@@ -442,7 +450,6 @@ void MainMenu()
 	cout << "0. To exit the program" << endl;
 	cout << "=> ";
 }
-
 void AdminMenu()
 {
 	system("CLS");
@@ -464,6 +471,27 @@ void PassengerMenu()
 	cout << "3. Edit your details (Passenger details)" << endl;
 	cout << "4. Search through flights" << endl;
 	cout << "=> ";
+}
+void DisplayFlights(Plane* obj /*,Size of array of plane*/)	//Incomplete
+{
+	int sizeOfArray;	// We need to have a variable that stores the size of the plane array, add that in int main
+	int availableTickets;		// We have total tickets in the object, but for this we need the available ones only
+	Time tempTime = obj->getDepartureTime();
+	Date tempDate = obj->getDate();
+
+	for (int counter = 0;counter < sizeOfArray;counter++)
+	{
+		if (obj[counter].getStatusOfFlight() == '0')
+		{
+			cout << "Available number of unbooked Tickets: " << obj->getUnbookedTickets() << endl;
+			cout << "Flight Status: " << obj->getStatusOfFlight() << endl;
+			cout << "Flight Number: " << obj->getFlightNumber() << endl;
+			cout << "Flight Date: " << tempDate.day << "/" << tempDate.month << "/" << tempDate.year << endl;
+			cout << "Departure Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl;
+			tempTime = obj->getArrivalTime();
+			cout << "Arrival Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl;
+		}
+	}
 }
 int main()
 {
