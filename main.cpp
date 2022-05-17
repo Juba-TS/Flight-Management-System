@@ -3,9 +3,6 @@ using namespace std;
 
 
 
-//// Rabi
-
-///=======
 class User
 {
 private:
@@ -143,6 +140,7 @@ public:
 		return ticketId;
 	}
 };
+
 class Admin : public User
 {
 private:
@@ -175,6 +173,7 @@ public:
 		return adminName;
 	}
 };
+
 class Ticket
 {
 private:
@@ -208,6 +207,7 @@ public:
 		return passportNumber;
 	}
 };
+
 class Date
 {
 public:
@@ -228,6 +228,7 @@ public:
 		year = newYear;
 	}
 };
+
 class Time
 {
 public:
@@ -248,6 +249,7 @@ public:
 		seconds = newSeconds;
 	}
 };
+
 class Airline
 {
 private:
@@ -281,6 +283,7 @@ public:
 		return airlineID;
 	}
 };
+
 class InternationalFlight :virtual public Airline
 {
 private:
@@ -303,6 +306,7 @@ public:
 		return country;
 	}
 };
+
 class LocalFlight : virtual public Airline
 {
 private:
@@ -325,6 +329,7 @@ public:
 		return city;
 	}
 };
+
 class Plane : public InternationalFlight, public LocalFlight
 {
 private:
@@ -444,6 +449,7 @@ public:
 		return flightDate;
 	}
 };
+
 void MainMenu()
 {
 	system("CLS");
@@ -455,6 +461,7 @@ void MainMenu()
 	cout << "0. To exit the program" << endl;
 	cout << "=> ";
 }
+
 void AdminMenu()
 {
 	system("CLS");
@@ -467,6 +474,7 @@ void AdminMenu()
 	cout << "6. Search through flights" << endl;
 	cout << "=> ";
 }
+
 void PassengerMenu()
 {
 	system("CLS");
