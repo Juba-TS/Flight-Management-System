@@ -1,6 +1,11 @@
 #include <iostream>
 using namespace std;
 
+
+
+//// Rabi
+
+///=======
 class User
 {
 private:
@@ -276,7 +281,7 @@ public:
 		return airlineID;
 	}
 };
-class InternationalFlight :virtual public Airline 
+class InternationalFlight :virtual public Airline
 {
 private:
 	string country;
@@ -298,9 +303,9 @@ public:
 		return country;
 	}
 };
-class LocalFlight : virtual public Airline 
+class LocalFlight : virtual public Airline
 {
-private: 
+private:
 	string city;
 public:
 	LocalFlight() : Airline()
@@ -347,8 +352,8 @@ public:
 		arrivalTime.minutes = 0;
 		arrivalTime.seconds = 0;
 	}
-	Plane(Ticket* newArr, char newStatus, int newTickets, int newFlightNumber, Time newDeptTime, Time newArrTime, Date newDate,string newName,
-		int newID): InternationalFlight(newName, newID), LocalFlight(newName,newID)
+	Plane(Ticket* newArr, char newStatus, int newTickets, int newFlightNumber, Time newDeptTime, Time newArrTime, Date newDate, string newName,
+		int newID) : InternationalFlight(newName, newID), LocalFlight(newName, newID)
 	{
 		ticketArray = newArr;
 		statusOfFlight = newStatus;
@@ -417,7 +422,7 @@ public:
 	int getUnbookedTickets()
 	{
 		int unbookedTickets = 0;
-		for (int counter = 0;counter < availableTickets - 1;counter++)
+		for (int counter = 0; counter < availableTickets - 1; counter++)
 			if (ticketArray[counter].getID() == 0)
 				unbookedTickets++;
 		return unbookedTickets;
@@ -472,54 +477,19 @@ void PassengerMenu()
 	cout << "4. Search through flights" << endl;
 	cout << "=> ";
 }
-void DisplayFlights(Plane* obj /*,Size of array of plane*/)	//Incomplete
-{
-	int sizeOfArray;	// We need to have a variable that stores the size of the plane array, add that in int main
-	int availableTickets;		// We have total tickets in the object, but for this we need the available ones only
-	Time tempTime = obj->getDepartureTime();
-	Date tempDate = obj->getDate();
 
-	for (int counter = 0;counter < sizeOfArray;counter++)
-	{
-		if (obj[counter].getStatusOfFlight() == '0')
-		{
-			cout << "Available number of unbooked Tickets: " << obj->getUnbookedTickets() << endl;
-			cout << "Flight Status: " << obj->getStatusOfFlight() << endl;
-			cout << "Flight Number: " << obj->getFlightNumber() << endl;
-			cout << "Flight Date: " << tempDate.day << "/" << tempDate.month << "/" << tempDate.year << endl;
-			cout << "Departure Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl;
-			tempTime = obj->getArrivalTime();
-			cout << "Arrival Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl;
-		}
-	}
-}
+
 int main()
 {
 	// Testing everything
-	MainMenu();
-	AdminMenu();
-	PassengerMenu();
-	// Testing definitions
-	Ticket* newArray = new Ticket[3];
-	Ticket* new2Array;
-	Time DeptTime, ArrTime;
-	ArrTime.hour = 1;
-	Date newDate;
-	for (int counter = 0;counter < 3;counter++)
-	{
-		newArray[counter].setID(counter);
-		newArray[counter].setPassportNumber(counter + 10);
-	}
-	Plane obj1(newArray,'O',15,500,DeptTime,ArrTime,newDate,"Turkish",300);
-	new2Array = obj1.getTickets();
-	for (int counter = 0;counter < 3;counter++)
-	{
-		cout << new2Array[counter].getID()<<"    "<<new2Array[counter].getPassportNumber() << endl;
-	}
-	cout << obj1.getAirlineID()<<"    " << obj1.getAirlineName() << endl;
-	cout << obj1.getCity() << "     " << obj1.getCountry() << endl;
-	cout << obj1.getAvailableTickets()<< endl;
-	cout << obj1.getFlightNumber() << "   " << obj1.getStatusOfFlight() << endl;
+	//MainMenu();
+	//AdminMenu();
+	//PassengerMenu();
+	
 
+
+
+
+	
 	return 0;
 }
