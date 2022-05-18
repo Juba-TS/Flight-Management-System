@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 using namespace std;
 
 
@@ -46,6 +48,7 @@ public:
 	}
 	// Print Function
 };
+
 class Passenger :public User
 {
 private:
@@ -357,6 +360,7 @@ public:
 		arrivalTime.minutes = 0;
 		arrivalTime.seconds = 0;
 	}
+
 	Plane(Ticket* newArr, char newStatus, int newTickets, int newFlightNumber, Time newDeptTime, Time newArrTime, Date newDate, string newName,
 		int newID) : InternationalFlight(newName, newID), LocalFlight(newName, newID)
 	{
@@ -486,18 +490,128 @@ void PassengerMenu()
 	cout << "=> ";
 }
 
+void PassengerFileName(string &passengerFile)
+{
+
+	cout << "Enter the name of file containing passenger records (filename should have its file type at the end e.g passengers.dat): ";
+	getline(cin, passengerFile, '\n');
+
+}
+void PlaneFileName(string &PassengerFile)
+{
+
+	cout << "Enter the name of file containing plane records (filename should have its file type at the end e.g planes.dat): ";
+	getline(cin, PassengerFile, '\n');
+
+}
+
+void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string PassengerFile)
+{
+	ifstream fin;
+	totalPassengers = 0;
+	char c;
+	fin.open(PassengerFile);
+
+	while (!(fin.eof()))
+	{
+		fin >> c;
+		//cout << c;
+		if (c == '.')
+		{
+			totalPassengers++;
+		}
+	}
+	fin.close();
+
+	totalPassengers--;
+
+	PassengerData = new Passenger[totalPassengers];
+
+	string username, password, passengername, nationality;
+	int TotalTickets;
+	long long int passportNo;
+	int* ticketids;
+
+	fin.open(PassengerFile);
+	for (int c = 0; c < totalPassengers; c++)
+	{
+		getline(fin, username, ',');
+		fin.ignore();
+		getline(fin, password, ',');
+		fin.ignore();
+		getline(fin, passengername, ',');
+		fin.ignore();
+		getline(fin, nationality, ',');
+		fin.ignore();
+		fin >> passportNo;
+		fin.ignore();
+		fin >> TotalTickets;
+		fin.ignore();
+
+		ticketids = new int[TotalTickets];
+
+		for (int i = 0; i < TotalTickets; i++)
+		{
+			fin >> ticketids[i];
+			
+		}
+
+		fin.ignore();
+		
+		PassengerData[c].setUsername(username);
+		PassengerData[c].setPassword(password);
+		PassengerData[c].SetPassengerName(passengername);
+		PassengerData[c].SetNationality(nationality);
+		PassengerData[c].SetPassportNo(passportNo);
+		PassengerData[c].SetTicketsBooked(TotalTickets);
+		PassengerData[c].SetTicketIds(ticketids);
+	}
+	fin.close();
+}
+
+
 
 int main()
 {
+	string passengerFile, PlaneFile;
+	PassengerFileName(passengerFile);
+	PlaneFileName(PlaneFile);
+
+	int totalPassengers = 0, totalPlanes = 0;
+
+	Passenger* PassengerData;
+	InputPassengerData(PassengerData, totalPassengers, passengerFile);
+
+
+	// To check if correct passenger input is being saved
+	/*for (int i = 0; i < totalPassengers; i++)
+	{
+		cout << PassengerData[i].getUsername() << " ";
+		cout << PassengerData[i].getPassword() << " ";
+		cout << PassengerData[i].GetPassengerName() << " ";
+		cout << PassengerData[i].GetNationality() << " ";
+		cout << PassengerData[i].GetPassportNo() << " ";
+		cout << PassengerData[i].GetTicketsBooked() << " ";
+
+		int* tickets = PassengerData[i].GetTicketIds();
+
+		for (int j = 0; j < PassengerData[i].GetTicketsBooked(); j++)
+		{
+			cout << tickets[j] << " ";
+		}
+	}*/
+
+	
+
 	// Testing everything
 	//MainMenu();
 	//AdminMenu();
 	//PassengerMenu();
-	
-
-
-
 
 	
+
+
+
+
 	return 0;
 }
