@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 using namespace std;
 
 
@@ -45,7 +47,7 @@ public:
 		return password;
 	}
 	
-	bool operator ==(const User& newUser)
+	bool operator == (const User& newUser)
 	{
 		if (username == newUser.username && password == newUser.password)
 		{
@@ -160,17 +162,37 @@ public:
 	}
 	
 	//operator overloading
-	/*friend ostream& operator << (ostream& out, const Passenger& newPasenger);*/
+	friend ostream& operator << (ostream& out, const Passenger& newPasenger);
+	friend ostream& operator << (ostream& out, const Passenger& newPasenger);
 	//friend istream& operator >> (istream& in, const Passenger& newPasenger);
+	
+
+
 };
-//ostream& operator << (ostream& out, const Passenger& newPasenger)
-//{
-//
-//}
-//istream& operator >> (istream& in, const Passenger& newPasenger)
-//{
-//
-//}
+ostream& operator << (ostream& out, Passenger& newPassenger)
+{
+
+	
+	cout << newPassenger.getUsername() << ", ";
+	cout << newPassenger.getPassword() << ", ";
+	cout << newPassenger.GetPassengerName() << ", ";
+	cout << newPassenger.GetNationality() << ", ";
+	cout << newPassenger.GetPassportNo() << ", ";
+	cout << newPassenger.GetTicketsBooked() << ",";
+	int* tickets = newPassenger.GetTicketIds();
+	for (int j = 0; j < newPassenger.GetTicketsBooked(); j++)
+	{
+		cout << " " << tickets[j];
+	}
+	cout << ".";
+
+	return out;
+
+}
+////istream& operator >> (istream& in, const Passenger& newPasenger)
+////{
+////
+////}
 
 class Admin : public User
 {
@@ -483,8 +505,9 @@ public:
 	}
 };
 
-void MainMenu()
+int MainMenu()
 {
+	int choice = 0;
 	system("CLS");
 	cout << "Welcome to the Flight Management System!!" << endl;
 	cout << endl;
@@ -493,10 +516,26 @@ void MainMenu()
 	cout << "2. For Passenger" << endl;
 	cout << "0. To exit the program" << endl;
 	cout << "=> ";
+	cin >> choice;
+	return choice;
+	
+}
+int SignInMenu()
+{	
+	int choice = 0;
+	system("CLS");
+	cout << "Choose whatever you would like to do:" << endl;
+	cout << "1. Log In" << endl;
+	cout << "2. Sign Up" << endl;
+	cout << "0. To exit the program" << endl;
+	cout << "=> ";
+	cin >> choice;
+	return choice;
 }
 
-void AdminMenu()
+int AdminMenu()
 {
+	int choice = 0;
 	system("CLS");
 	cout << "Choose whatever you would like to do:" << endl;
 	cout << "1. Search through completed flights" << endl;
@@ -506,10 +545,14 @@ void AdminMenu()
 	cout << "5. Display Passengers (Based on flight number, nationality or passport number)" << endl;
 	cout << "6. Search through flights" << endl;
 	cout << "=> ";
+	cin >> choice;
+	return choice;
+
 }
 
-void PassengerMenu()
+int PassengerMenu()
 {
+	int choice = 0;
 	system("CLS");
 	cout << "Choose whatever you would like to do:" << endl;
 	cout << "1. Display available flights" << endl;
@@ -517,18 +560,149 @@ void PassengerMenu()
 	cout << "3. Edit your details (Passenger details)" << endl;
 	cout << "4. Search through flights" << endl;
 	cout << "=> ";
+	cin >> choice;
+	return choice;
+
 }
 
-void LoginPortal(Admin  admin)
+void PassengerFileName(string& passengerFile)
+{
+
+	cout << "Enter the name of file containing passenger records (filename should have its file type at the end e.g passengers.dat): ";
+	getline(cin, passengerFile, '\n');
+
+}
+void PlaneFileName(string& PassengerFile)
+{
+
+	cout << "Enter the name of file containing plane records (filename should have its file type at the end e.g planes.dat): ";
+	getline(cin, PassengerFile, '\n');
+
+}
+
+void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string PassengerFile)
+{
+	ifstream fin;
+	totalPassengers = 0;
+
+	char c;
+	fin.open(PassengerFile);
+
+	while (!(fin.eof()))
+	{
+		fin >> c;
+		
+		if (c == '.')
+		{
+			totalPassengers++;
+		}
+	}
+	fin.close();
+
+	totalPassengers--;
+	PassengerData = new Passenger[totalPassengers];
+
+	string username, password, passengername, nationality;
+	int TotalTickets;
+	long long int passportNo;
+	int* ticketids;
+
+	fin.open(PassengerFile);
+	for (int c = 0; c < totalPassengers; c++)
+	{
+		if (c > 0)
+		{
+			fin.ignore();
+		}
+		getline(fin, username, ',');
+		fin.ignore();
+		getline(fin, password, ',');
+		fin.ignore();
+		getline(fin, passengername, ',');
+		fin.ignore();
+		getline(fin, nationality, ',');
+		fin.ignore();
+		fin >> passportNo;
+		fin.ignore();
+		fin >> TotalTickets;
+		fin.ignore();
+
+		ticketids = new int[TotalTickets];
+
+		for (int i = 0; i < TotalTickets; i++)
+		{
+			fin >> ticketids[i];
+
+		}
+
+		fin.ignore();
+
+		PassengerData[c].setUsername(username);
+		PassengerData[c].setPassword(password);
+		PassengerData[c].SetPassengerName(passengername);
+		PassengerData[c].SetNationality(nationality);
+		PassengerData[c].SetPassportNo(passportNo);
+		PassengerData[c].SetTicketsBooked(TotalTickets);
+		PassengerData[c].SetTicketIds(ticketids);
+	}
+	fin.close();
+	
+}
+
+bool CredentialsExist(Passenger* passenger, int& totalPassengers, User tempUser, int& idx)
+{
+	bool credentialsExist = false;
+
+
+	for (int i = 0; i < totalPassengers; i++)
+	{
+		if (tempUser==passenger[i])
+		{
+			credentialsExist = true;
+			idx = i;
+			break;
+		}
+	}
+	return credentialsExist;
+}
+
+bool CredentialsExist(Passenger* passenger, int& totalPassengers, string username)
+{
+	bool credentialsExist = false;
+	for (int i = 0; i < totalPassengers; i++)
+	{
+		if (username == passenger[i].getUsername())
+		{
+			credentialsExist = true;
+			break;
+		}
+	}
+	return credentialsExist;
+}
+bool CredentialsExist(Passenger* passenger, int& totalPassengers, long long int passportNo)
+{
+	bool credentialsExist = false;
+	for (int i = 0; i < totalPassengers; i++)
+	{
+		if(passportNo==passenger[i].GetPassportNo())
+		credentialsExist = true;
+		
+		break;
+	}
+	return credentialsExist;
+}
+
+
+bool LoginPortal(Admin  admin)
 {
 	User tempUser;
 	string tempUsername;
 	string tempPassword;
 	char choice;
+	bool isAdmin = false;
 
-	while (tempUser != admin)
+	do
 	{
-
 		system("CLS");
 		cout << "Welcome to Admin Login Portal \n\n\n";
 		cout << "Username: ";
@@ -538,76 +712,120 @@ void LoginPortal(Admin  admin)
 		cin >> tempPassword;
 		tempUser.setPassword(tempPassword);
 
-		//for (int i = 0; i < size; i++)
-		//{
 		if (tempUser == admin)
 		{
+			isAdmin = true;
 			cout << admin.GetAdminName() << " Welcome to Flight Management System \n";
+
+			system("pause");
+			break;
 		}
+
 		else
 		{
 
 			cout << "\nInvalid Username or Password \n\n";
 			cout << "Press y to retry \t Press any key to exit\n";
 			cin >> choice;
-			if (choice == 'y')
-			{
-				continue;
-			}
-			else
+			if (choice != 'y')
 			{
 				break;
 			}
+			else
+			{
+				continue;
+			}
 
 		}
-		//}
-	}
+
+	} while (tempUser != admin);
+
+	return isAdmin;
 }
-void LoginPortal(Passenger  passenger)
+
+bool LoginPortal(Passenger* passenger, int totalPassengers)
 {
-	User tempUser;
+	Passenger tempUser;
 	string tempUsername;
 	string tempPassword;
-	char choice;
-
-	while (tempUser != passenger)
+	int index=-1;
+	bool isPassenger = false;
+	do
 	{
-
 		system("CLS");
-		cout << "Welcome to Passenger Login Portal \n\n\n";
+		cout << "Welcome to Passenger Log In Portal \n\n\n";
 		cout << "Username: ";
 		cin >> tempUsername;
-		tempUser.setUsername(tempUsername);
 		cout << "\nPassword: ";
 		cin >> tempPassword;
+		tempUser.setUsername(tempUsername);
 		tempUser.setPassword(tempPassword);
-
-		//for (int i = 0; i < size; i++)
-		//{
-		if (tempUser == passenger)
-		{
-			cout << passenger.GetPassengerName() << " Welcome to Flight Management System \n";
-		}
-		else
+		if (CredentialsExist(passenger, totalPassengers, tempUser, index))
+			break;
+		else if (!CredentialsExist(passenger, totalPassengers, tempUser, index))
 		{
 
-			cout << "\nInvalid Username or Password \n\n";
-			cout << "Press y to retry \t Press any key to exit\n";
-			cin >> choice;
-			if (choice == 'y')
-			{
-				continue;
-			}
-			else
-			{
-				break;
-			}
-
+			cout << "The username or password is incorrect\n";
+			cout << "Kindly re enter \n";
+			system("pause");
+			continue;
 		}
-		//}
+
+
+	} while (!CredentialsExist(passenger, totalPassengers, tempUser, index));
+
+	if (CredentialsExist(passenger, totalPassengers, tempUser, index))
+	{
+		isPassenger = true;
+				tempUser.SetPassengerName(passenger[index].GetPassengerName());
+				cout << tempUser.GetPassengerName() << " Welcome to Flight Management System \n";
+				system("pause");
+		
 	}
+	return isPassenger;
+
 }
-void SignUp(Passenger passenger)
+
+void InsertPassenger(Passenger* passenger, int& totalPassengers, string PassengerFile, Passenger newPassenger)
+{
+
+	ofstream fout;
+	fout.open(PassengerFile);
+	
+	for (int i = 0; i < totalPassengers; i++)
+	{
+		fout << passenger[i].getUsername() << ", ";
+		fout << passenger[i].getPassword() << ", ";
+		fout << passenger[i].GetPassengerName() << ", ";
+		fout << passenger[i].GetNationality() << ", ";
+		fout << passenger[i].GetPassportNo() << ", ";
+		fout << passenger[i].GetTicketsBooked() << ",";
+		int* tickets = passenger[i].GetTicketIds();
+		for (int j = 0; j < passenger[i].GetTicketsBooked(); j++)
+		{
+			fout << " " << tickets[j];
+		}
+		fout << ".\n";
+		
+	}
+	
+	fout << newPassenger.getUsername() << ", ";
+	fout << newPassenger.getPassword() << ", ";
+	fout << newPassenger.GetPassengerName() << ", ";
+	fout << newPassenger.GetNationality() << ", ";
+	fout << newPassenger.GetPassportNo() << ", ";
+	fout << newPassenger.GetTicketsBooked() << ",";
+	int* tickets = newPassenger.GetTicketIds();
+	for (int j = 0; j < newPassenger.GetTicketsBooked(); j++)
+	{
+		fout << " " << tickets[j];
+	}
+	fout << ".\n";
+	fout.close();
+
+}
+
+void SignUp(Passenger* passenger, int& totalPassengers,string PassengerFile)
 {
 	Passenger newPassenger;
 	string tempUsername;
@@ -616,98 +834,131 @@ void SignUp(Passenger passenger)
 	string tempNationality;
 	long long int tempPassportNo;
 
-
-	char choice, anykey;
-
+	char choice;
 
 	do
 	{
-
 		system("CLS");
 		cout << "Welcome to Passenger Sign Up Portal \n\n\n";
 		cout << "Username: ";
 		cin >> tempUsername;
-		newPassenger.setUsername(tempUsername);
 
-		if (tempUsername == passenger.getUsername())
+
+		if (CredentialsExist(passenger, totalPassengers, tempUsername))
 		{
+
 			cout << "The username is already taken \n";
-
-			cout << "Press y to re enter \t Press any key to exit\n";
-			cin >> choice;
-			if (choice == 'y')
-			{
-				continue;
-			}
-			else
-			{
-				break;
-			}
-
+			cout << "Kindly enter another username \n";
+			system("pause");
 		}
-
 		else
+			break;
+
+	} while (CredentialsExist(passenger, totalPassengers, tempUsername));
+	if (!CredentialsExist(passenger, totalPassengers, tempUsername))
+	{
+		newPassenger.setUsername(tempUsername);
+	}
+
+	cout << "\nPassword: ";
+	cin >> tempPassword;
+	newPassenger.setPassword(tempPassword);
+
+	cout << "\Passenger Name: ";
+	cin >> tempPassengerName;
+	newPassenger.SetPassengerName(tempPassengerName);
+
+	cout << "\nNationality: ";
+	cin >> tempNationality;
+	newPassenger.SetNationality(tempNationality);
+
+	do
+	{
+		cout << "\nPassport No: ";
+		cin >> tempPassportNo;
+
+		if (CredentialsExist(passenger, totalPassengers, tempPassportNo))
 		{
-			cout << "\nPassword: ";
-			cin >> tempPassword;
-			newPassenger.setPassword(tempPassword);
-
-			//cout << endl << newPassenger.getUsername() << endl << newPassenger.getPassword();
-
-			cout << "\Passenger Name: ";
-			cin >> tempPassengerName;
-			newPassenger.SetPassengerName(tempPassengerName);
-			cout << "\nNationality: ";
-			cin >> tempNationality;
-			newPassenger.SetNationality(tempNationality);
-
-
-			do
-			{
-
-				cout << "\nPassport No: ";
-				cin >> tempPassportNo;
-				newPassenger.SetPassportNo(tempPassportNo);
-				if (tempPassportNo == passenger.GetPassportNo())
-				{
-					cout << "\nPassport No already exists \n";
-					//system("pause");
-				}
-			} while (newPassenger.GetPassportNo() == passenger.GetPassportNo());
+			cout << "\nPassport No already exists \n";
+			cout << "Check your Passport No and re enter \n";
+			system("pause");
 		}
 
-	} while (newPassenger.getUsername() == passenger.getUsername());
+	} while (CredentialsExist(passenger, totalPassengers, tempPassportNo));
 
-	cout << newPassenger.getUsername() << endl;
-	cout << newPassenger.getPassword() << endl;
-	cout << newPassenger.GetPassengerName() << endl;
-	cout << newPassenger.GetNationality() << endl;
-	cout << newPassenger.GetPassportNo() << endl;
-	cout << newPassenger.GetTicketsBooked() << endl;
-	cout << newPassenger.GetTicketIds() << endl;
-
-
+	if (!CredentialsExist(passenger, totalPassengers, tempPassportNo))
+	{
+		newPassenger.SetPassportNo(tempPassportNo);
+	}
+	cout << "new passenger: \n" << newPassenger;
+	InsertPassenger(passenger, totalPassengers, PassengerFile, newPassenger);
+	///InputPassengerData(passenger, totalPassengers, PassengerFile);
 
 }
 
+
+
 int main()
 {
-	// Testing everything
-	//MainMenu();
-	//AdminMenu();
-	//PassengerMenu();
+	bool isAdmin = false;
+	bool isPassenger = false;
+	string passengerFile, PlaneFile;
+	int totalPassengers = 0, totalPlanes = 0;
+
+	PassengerFileName(passengerFile);
+	//PlaneFileName(PlaneFile);
+
+
+
+	Passenger* PassengerData;
+	InputPassengerData(PassengerData, totalPassengers, passengerFile);
+
+	// To check if correct passenger input is being saved
+	/*for (int i = 0; i < totalPassengers; i++)
+	{
+		cout << PassengerData[i];
+	}
+	system("pause");*/
+
 	Admin Admin1("sussybaka", "juba", "Susmad");
-	Passenger P1;
-	P1.setUsername("Attack");
-	P1.setPassword("freedom");
-	P1.SetPassengerName("Eren");
-	P1.SetPassportNo(90078601);
 
-	//LoginPortal(P1);
-	//LoginPortal(Admin1);
-	//SignUp(P1);
+	int choice = 0, choice2 = 0;
 
+	// Testing everything
+	choice=MainMenu();
+	if (choice == 1)
+	{
+		isAdmin=LoginPortal(Admin1);
+		if(isAdmin)
+		{
+			AdminMenu();
+		}
+		
+	
+	}
+	else  if (choice == 2)
+	{
+		choice2=SignInMenu();
+		if (choice2 == 1)
+		{
+			isPassenger=LoginPortal(PassengerData,totalPassengers);
+			if (isPassenger)
+			{
+				PassengerMenu();
+			}
+		}
+		else if (choice2 == 2)
+		{
+			SignUp(PassengerData,totalPassengers,passengerFile);
+		}
+	}
+	
+	for (int i = 0; i < totalPassengers; i++)
+	{
+		cout << PassengerData[i];
+	}
+	
 
-
+	
 	return 0;
 }
