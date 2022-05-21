@@ -584,6 +584,10 @@ void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string 
 {
 	ifstream fin;
 	totalPassengers = 0;
+	if (!PassengerData)
+	{
+		delete[] PassengerData;
+	}
 
 	char c;
 	fin.open(PassengerFile);
@@ -646,6 +650,7 @@ void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string 
 		PassengerData[c].SetTicketIds(ticketids);
 	}
 	fin.close();
+	 
 	
 }
 
@@ -825,7 +830,7 @@ void InsertPassenger(Passenger* passenger, int& totalPassengers, string Passenge
 
 }
 
-void SignUp(Passenger* passenger, int& totalPassengers,string PassengerFile)
+Passenger SignUp(Passenger* passenger, int& totalPassengers,string PassengerFile)
 {
 	Passenger newPassenger;
 	string tempUsername;
@@ -890,9 +895,10 @@ void SignUp(Passenger* passenger, int& totalPassengers,string PassengerFile)
 	{
 		newPassenger.SetPassportNo(tempPassportNo);
 	}
-	cout << "new passenger: \n" << newPassenger;
-	InsertPassenger(passenger, totalPassengers, PassengerFile, newPassenger);
-	///InputPassengerData(passenger, totalPassengers, PassengerFile);
+	return newPassenger;
+	//InsertPassenger(passenger, totalPassengers, PassengerFile, newPassenger);
+	
+	//InputPassengerData(passenger, totalPassengers, PassengerFile);
 
 }
 
@@ -905,20 +911,21 @@ int main()
 	string passengerFile, PlaneFile;
 	int totalPassengers = 0, totalPlanes = 0;
 
+	Passenger newPassenger;
+
+	
 	PassengerFileName(passengerFile);
 	//PlaneFileName(PlaneFile);
 
-
-
 	Passenger* PassengerData;
 	InputPassengerData(PassengerData, totalPassengers, passengerFile);
-
+	
 	// To check if correct passenger input is being saved
-	/*for (int i = 0; i < totalPassengers; i++)
+	for (int i = 0; i < totalPassengers; i++)
 	{
-		cout << PassengerData[i];
+		cout << PassengerData[i]<<endl;
 	}
-	system("pause");*/
+	system("pause");
 
 	Admin Admin1("sussybaka", "juba", "Susmad");
 
@@ -949,14 +956,18 @@ int main()
 		}
 		else if (choice2 == 2)
 		{
-			SignUp(PassengerData,totalPassengers,passengerFile);
+			newPassenger=SignUp(PassengerData,totalPassengers,passengerFile);
+			InsertPassenger(PassengerData, totalPassengers, passengerFile, newPassenger);
+			InputPassengerData(PassengerData, totalPassengers, passengerFile);
+
 		}
 	}
 	
-	for (int i = 0; i < totalPassengers; i++)
+	//check if the the data input and stored is correct
+	/*for (int i = 0; i < totalPassengers; i++)
 	{
-		cout << PassengerData[i];
-	}
+		cout << PassengerData[i]<<endl;
+	}*/
 	
 
 	
