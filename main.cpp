@@ -523,6 +523,7 @@ int getChoice()
 	return choice;
 }
 
+////////////////////////////////////////////Menu Functions Start Here////////////////////////////////
 
 int MainMenu()
 {
@@ -584,6 +585,9 @@ int PassengerMenu()
 
 }
 
+/////////////////////////////////////////////////////Menu Functions ENd here/////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////Sarmad's Input Functions Start here///////////////////////////////////////////////
 void PassengerFileName(string& passengerFile)
 {
 
@@ -672,7 +676,37 @@ void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string 
 	 
 	
 }
+///////////////////////////////////////////////////////////SArmad's Functions end here///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////Haseeb's functions Start Here///////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////Haseeb's Functions end here///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////Abdul Raheem's Functions's start here////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool CredentialsExist(Passenger* passenger, int& totalPassengers, User tempUser, int& idx)
 {
 	bool credentialsExist = false;
@@ -1028,12 +1062,15 @@ void EditTotalTickets(Passenger* passenger, int& totalPassengers, int index)
 }
 void EditTicketIDs(Passenger* passenger, int& totalPassengers, int index)
 {
+	int* tempticketId;
+	///////////////////Continuefrom here
 
 }
 
 void EditPassengerDetails(Passenger* passenger, int& totalPassengers,int index)
 {
 	int choice = 0;
+	
 	//string tempUsername;
 	//int index=-1;
 	//while (index == -1)
@@ -1105,6 +1142,7 @@ int main()
 
 	Passenger* PassengerData;
 	InputPassengerData(PassengerData, totalPassengers, passengerFile);
+	Admin Admin1("sussybaka", "juba", "Susmad");
 	
 	// To check if correct passenger input is being saved
 	for (int i = 0; i < totalPassengers; i++)
@@ -1113,7 +1151,8 @@ int main()
 	}
 	system("pause");
 
-	Admin Admin1("sussybaka", "juba", "Susmad");
+
+
 
 	int choice = 0, choice2 = 0;
 
