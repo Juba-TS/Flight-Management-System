@@ -507,6 +507,8 @@ void PlaneFileName(string &PassengerFile)
 
 void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string PassengerFile)
 {
+	delete[] PassengerData;
+
 	ifstream fin;
 	totalPassengers = 0;
 	char c;
@@ -515,7 +517,7 @@ void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string 
 	while (!(fin.eof()))
 	{
 		fin >> c;
-		//cout << c;
+		
 		if (c == '.')
 		{
 			totalPassengers++;
@@ -569,6 +571,139 @@ void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string 
 	fin.close();
 }
 
+void InputPlaneData(Plane*& PlaneData, int& totalPlanes, string PlaneFile)
+{
+	delete[] PlaneData;
+
+	ifstream fin;
+	totalPlanes = 0;
+	char c;
+	fin.open(PlaneFile);
+
+	while (!(fin.eof()))
+	{
+		fin >> c;
+
+		if (c == '.')
+		{
+			totalPlanes++;
+		}
+	}
+	fin.close();
+
+	totalPlanes--;
+
+	PlaneData = new Plane[totalPlanes];
+
+	string airlineName, country, city;
+	char status;
+	Time departure, arrival;
+	Date flightDate;
+	int airlineID = 0, availableTickets = 0, flightNo = 0;
+
+	fin.open(PlaneFile);
+	for (int i = 0; i < totalPlanes; i++)
+	{
+		getline(fin, airlineName, ',');
+		fin.ignore();
+		fin >> airlineID;
+		fin.ignore(2);
+		getline(fin, city, ',');
+		fin.ignore();
+		getline(fin, country, ',');
+		fin.ignore();
+		fin >> status;
+		fin.ignore();
+		fin >> availableTickets;
+		fin.ignore();
+		fin >> flightNo;
+		fin.ignore();
+		fin >> arrival.hour;
+		fin.ignore();
+		fin >> arrival.minutes;
+		fin.ignore();
+		fin >> arrival.seconds;
+		fin.ignore();
+		fin >> departure.hour;
+		fin.ignore();
+		fin >> departure.minutes;
+		fin.ignore();
+		fin >> departure.seconds;
+		fin.ignore();
+		fin >> flightDate.day;
+		fin.ignore();
+		fin >> flightDate.month;
+		fin.ignore();
+		fin >> flightDate.year;
+		fin.ignore();
+
+		Ticket* tickets = new Ticket[20 - availableTickets];
+		int ticketID = 0, passportNo = 0;
+		for (int j = 0; j < 20 - availableTickets; j++)
+		{
+			fin >> ticketID;
+			fin >> passportNo;
+
+			tickets[j].setID(ticketID);
+			tickets[j].setPassportNumber(passportNo);
+			
+			fin.ignore();
+		}
+		fin.ignore();
+
+		PlaneData[i].setAirlineName(airlineName);
+		PlaneData[i].setAirlineID(airlineID);
+		PlaneData[i].setCountry(country);
+		PlaneData[i].setCity(city);
+		PlaneData[i].setDate(flightDate);
+		PlaneData[i].setArrivalTime(arrival);
+		PlaneData[i].setDepartureTime(departure);
+		PlaneData[i].setAvailableTickets(availableTickets);
+		PlaneData[i].setFlightNumber(flightNo);
+		PlaneData[i].setStatusOfFlight(status);
+		PlaneData[i].setTicketArr(tickets);
+	}
+	fin.close();
+}
+
+void OutputPlaneData( Plane* PlaneData, const int totalPlanes, const string PlaneFile)
+{
+	ofstream fout;
+	fout.open(PlaneFile);
+	for (int i = 0; i < totalPlanes; i++)
+	{
+		Time arrival = PlaneData[i].getArrivalTime();
+		Time departure = PlaneData[i].getDepartureTime();
+		Date dateflight = PlaneData[i].getDate();
+		Ticket* tickets = PlaneData[i].getTickets();
+
+		fout << PlaneData[i].getAirlineName() << ", ";
+		fout << PlaneData[i].getAirlineID() << ", ";
+		fout << PlaneData[i].getCity() << ", ";
+		fout << PlaneData[i].getCountry() << ", ";
+		fout << PlaneData[i].getStatusOfFlight() << ", ";
+		fout << PlaneData[i].getAvailableTickets() << ", ";
+		fout << PlaneData[i].getFlightNumber() << ", ";
+		fout << arrival.hour << ":" << arrival.minutes << ":" << arrival.seconds << ", ";
+		fout << departure.hour << ":" << departure.minutes << ":" << departure.seconds << ", ";
+		fout << dateflight.day << "/" << dateflight.month << "/" << dateflight.year << ", ";
+
+		for (int j = 0; j < (20 - PlaneData[i].getAvailableTickets()); j++)
+		{
+			fout << tickets[j].getID() << " " << tickets[j].getPassportNumber();
+			if (j == (20 - PlaneData[i].getAvailableTickets()) - 1)
+			{
+				fout << ".";
+			}
+			else
+			{
+				fout << ", ";
+			}
+		}
+		fout << endl;
+	}
+}
+
 
 
 int main()
@@ -579,11 +714,56 @@ int main()
 
 	int totalPassengers = 0, totalPlanes = 0;
 
-	Passenger* PassengerData;
+	Passenger* PassengerData = nullptr;
 	InputPassengerData(PassengerData, totalPassengers, passengerFile);
 
+	Plane* PlaneData = nullptr;
+	InputPlaneData(PlaneData, totalPlanes, PlaneFile);
+	
+	OutputPlaneData(PlaneData, totalPlanes, PlaneFile);
 
-	// To check if correct passenger input is being saved
+	InputPlaneData(PlaneData, totalPlanes, PlaneFile);
+
+	//To check whther Plane input is working or not
+
+	for (int i = 0; i < totalPlanes; i++)
+	{
+		Time arrival = PlaneData[i].getArrivalTime();
+		Time departure = PlaneData[i].getDepartureTime();
+		Date dateflight = PlaneData[i].getDate();
+		Ticket* tickets = PlaneData[i].getTickets();
+
+		cout << PlaneData[i].getAirlineName() << ", ";
+		cout << PlaneData[i].getAirlineID() << ", ";
+		cout << PlaneData[i].getCity() << ", ";
+		cout << PlaneData[i].getCountry() << ", ";
+		cout << PlaneData[i].getStatusOfFlight() << ", ";
+		cout << PlaneData[i].getAvailableTickets() << ", ";
+		cout << PlaneData[i].getFlightNumber() << ", ";
+		cout << arrival.hour << ":" << arrival.minutes << ":" << arrival.seconds << ", ";
+		cout << departure.hour << ":" << departure.minutes << ":" << departure.seconds << ", ";
+		cout << dateflight.day << "/" << dateflight.month << "/" << dateflight.year << ", ";
+
+		for (int j = 0; j < (20 - PlaneData[i].getAvailableTickets()); j++)
+		{
+			cout << tickets[j].getID() << " " << tickets[j].getPassportNumber();
+			if (j == (20 - PlaneData[i].getAvailableTickets()) - 1)
+			{
+				cout << ".";
+			}
+			else
+			{
+				cout << ", ";
+			}
+		}
+		cout << endl;
+	}
+	
+
+
+
+
+	//To check if correct passenger input is being saved
 	/*for (int i = 0; i < totalPassengers; i++)
 	{
 		cout << PassengerData[i].getUsername() << " ";
