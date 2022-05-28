@@ -1000,6 +1000,8 @@ void InputFlightDetails(Plane*& obj, const int position)
 			cin >> passportNum;
 		}
 		cout << endl;
+		newArr[counter].setID(ticketID);
+		newArr[counter].setPassportNumber(passportNum);
 	}
 
 	obj[position].setAirlineID(airlineID);
