@@ -851,8 +851,10 @@ void FlightDisplay(Plane obj)	// Displays specific flight sent as parameter
 	Date tempDate = obj.getDate();
 	cout << "Available number of booked Tickets: " << obj.getBookedTickets() << endl;
 	cout << "Available number of unbooked Tickets: " << obj.getUnbookedTickets() << endl;
-	cout << "Flight Status: " << obj.getStatusOfFlight() << endl;
 	cout << "Flight Number: " << obj.getFlightNumber() << endl;
+	cout << "Flight Status: " << obj.getStatusOfFlight() << endl;
+	cout << "Flight City: " << obj.getCity() << endl;
+	cout << "Flight Country: " << obj.getCountry() << endl;
 	cout << "Flight Date: " << tempDate.day << "/" << tempDate.month << "/" << tempDate.year << endl;
 	cout << "Departure Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl;
 	tempTime = obj.getArrivalTime();
