@@ -160,7 +160,11 @@ public:
 	{
 		return ticketId;
 	}
-	
+	void DeleteTicketIds()
+	{
+		delete[] ticketId;
+		ticketId = nullptr;
+	}
 	//operator overloading
 	friend ostream& operator << (ostream& out, const Passenger& newPasenger);
 	friend ostream& operator << (ostream& out, const Passenger& newPasenger);
@@ -189,10 +193,8 @@ ostream& operator << (ostream& out, Passenger& newPassenger)
 	return out;
 
 }
-////istream& operator >> (istream& in, const Passenger& newPasenger)
-////{
-////
-////}
+
+
 
 class Admin : public User
 {
@@ -262,7 +264,6 @@ public:
 		return passportNumber;
 	}
 };
-
 class Date
 {
 public:
@@ -282,8 +283,13 @@ public:
 		month = newMonth;
 		year = newYear;
 	}
+	Date(const Date& copyObj)
+	{
+		day = copyObj.day;
+		month = copyObj.month;
+		year = copyObj.year;
+	}
 };
-
 class Time
 {
 public:
@@ -303,8 +309,13 @@ public:
 		minutes = newMinutes;
 		seconds = newSeconds;
 	}
+	Time(const Time& newObj)
+	{
+		hour = newObj.hour;
+		minutes = newObj.minutes;
+		seconds = newObj.seconds;
+	}
 };
-
 class Airline
 {
 private:
@@ -314,7 +325,7 @@ public:
 	Airline()
 	{
 		airlineName = '\0';
-		airlineID = 0;
+		airlineID = -1;
 	}
 	Airline(string newName, int newID)
 	{
@@ -338,7 +349,6 @@ public:
 		return airlineID;
 	}
 };
-
 class InternationalFlight :virtual public Airline
 {
 private:
@@ -361,7 +371,6 @@ public:
 		return country;
 	}
 };
-
 class LocalFlight : virtual public Airline
 {
 private:
@@ -384,23 +393,24 @@ public:
 		return city;
 	}
 };
-
 class Plane : public InternationalFlight, public LocalFlight
 {
 private:
 	Ticket* ticketArray;
-	char statusOfFlight;	//O for ontime, D for delayed, M for Missed
+	char statusOfFlight;	//O for ontime, D for delayed, M for Missed, C for completed
 	int availableTickets;
+	int bookedTickets;
 	int flightNumber;
 	Time departureTime;
 	Time arrivalTime;
 	Date flightDate;
 public:
-	Plane()
+	Plane() :InternationalFlight(), LocalFlight()
 	{
 		ticketArray = NULL;
 		statusOfFlight = '\0';
 		availableTickets = 0;
+		bookedTickets = 0;
 		flightNumber = 0;
 		flightDate.day = 0;
 		flightDate.month = 0;
@@ -412,12 +422,14 @@ public:
 		arrivalTime.minutes = 0;
 		arrivalTime.seconds = 0;
 	}
-	Plane(Ticket* newArr, char newStatus, int newTickets, int newFlightNumber, Time newDeptTime, Time newArrTime, Date newDate, string newName,
+
+	Plane(Ticket* newArr, char newStatus, int newTickets, int newBookedTickets, int newFlightNumber, Time newDeptTime, Time newArrTime, Date newDate, string newName,
 		int newID) : InternationalFlight(newName, newID), LocalFlight(newName, newID)
 	{
 		ticketArray = newArr;
 		statusOfFlight = newStatus;
 		availableTickets = newTickets;
+		bookedTickets = newBookedTickets;
 		flightNumber = newFlightNumber;
 		flightDate.day = newDate.day;
 		flightDate.month = newDate.month;
@@ -428,6 +440,17 @@ public:
 		arrivalTime.hour = newArrTime.hour;
 		arrivalTime.minutes = newArrTime.minutes;
 		arrivalTime.seconds = newArrTime.seconds;
+	}
+	Plane(const Plane& obj)
+	{
+		ticketArray = obj.ticketArray;
+		statusOfFlight = obj.statusOfFlight;
+		availableTickets = obj.availableTickets;
+		bookedTickets = obj.bookedTickets;
+		flightNumber = obj.flightNumber;
+		flightDate = obj.flightDate;
+		departureTime = obj.departureTime;
+		arrivalTime = obj.arrivalTime;
 	}
 
 	// Setters
@@ -442,6 +465,10 @@ public:
 	void setAvailableTickets(int newAvailableTickets)
 	{
 		availableTickets = newAvailableTickets;
+	}
+	void setBookedTickets(int newBookedTickets)
+	{
+		bookedTickets = newBookedTickets;
 	}
 	void setFlightNumber(int newFlight)
 	{
@@ -479,13 +506,13 @@ public:
 	{
 		return availableTickets;
 	}
+	int getBookedTickets()
+	{
+		return bookedTickets;
+	}
 	int getUnbookedTickets()
 	{
-		int unbookedTickets = 0;
-		for (int counter = 0; counter < availableTickets - 1; counter++)
-			if (ticketArray[counter].getID() == 0)
-				unbookedTickets++;
-		return unbookedTickets;
+		return availableTickets - bookedTickets;
 	}
 	int getFlightNumber()
 	{
@@ -503,8 +530,13 @@ public:
 	{
 		return flightDate;
 	}
+	~Plane()
+	{
+		delete[] ticketArray;
+	}
 };
 
+////////////////////////////////////////////Menu Functions Start Here////////////////////////////////
 int getChoice()
 {
 	int choice = 0;
@@ -517,13 +549,9 @@ int getChoice()
 		cin.ignore(std::numeric_limits<int>::max(), '\n');
 		cout << "=>";
 		cin >> choice;
-
-
 	}
 	return choice;
 }
-
-////////////////////////////////////////////Menu Functions Start Here////////////////////////////////
 
 int MainMenu()
 {
@@ -584,10 +612,23 @@ int PassengerMenu()
 	return choice;
 
 }
+int EditTicketMenu()
+{
+	int choice = 0;
+	system("CLS");
+	cout << "Choose whatever you would like to do:" << endl;
+	cout << "1. Add Ticket" << endl;
+	cout << "2. Delete Ticket" << endl;
+	cout << "=> ";
+	choice = getChoice();
+	return choice;
+
+}
 
 /////////////////////////////////////////////////////Menu Functions ENd here/////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////Sarmad's Input Functions Start here///////////////////////////////////////////////
+
 void PassengerFileName(string& passengerFile)
 {
 
@@ -602,7 +643,6 @@ void PlaneFileName(string& PassengerFile)
 	getline(cin, PassengerFile, '\n');
 
 }
-
 void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string PassengerFile)
 {
 	ifstream fin;
@@ -618,7 +658,7 @@ void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string 
 	while (!(fin.eof()))
 	{
 		fin >> c;
-		
+
 		if (c == '.')
 		{
 			totalPassengers++;
@@ -673,35 +713,620 @@ void InputPassengerData(Passenger*& PassengerData, int& totalPassengers, string 
 		PassengerData[c].SetTicketIds(ticketids);
 	}
 	fin.close();
-	 
-	
+
+
+}
+void InputPlaneData(Plane*& PlaneData, int& totalPlanes, string PlaneFile)
+{
+	delete[] PlaneData;
+
+	ifstream fin;
+	totalPlanes = 0;
+	char c;
+	fin.open(PlaneFile);
+
+	while (!(fin.eof()))
+	{
+		fin >> c;
+
+		if (c == '.')
+		{
+			totalPlanes++;
+		}
+	}
+	fin.close();
+
+	totalPlanes--;
+
+	PlaneData = new Plane[totalPlanes];
+
+	string airlineName, country, city;
+	char status;
+	Time departure, arrival;
+	Date flightDate;
+	int airlineID = 0, availableTickets = 0, flightNo = 0, bookedTickets = 0;
+
+	fin.open(PlaneFile);
+	for (int i = 0; i < totalPlanes; i++)
+	{
+		getline(fin, airlineName, ',');
+		fin.ignore();
+		fin >> airlineID;
+		fin.ignore(2);
+		getline(fin, city, ',');
+		fin.ignore();
+		getline(fin, country, ',');
+		fin.ignore();
+		fin >> status;
+		fin.ignore();
+		fin >> availableTickets;
+		fin.ignore();
+		fin >> bookedTickets;
+		fin.ignore();
+		fin >> flightNo;
+		fin.ignore();
+		fin >> arrival.hour;
+		fin.ignore();
+		fin >> arrival.minutes;
+		fin.ignore();
+		fin >> arrival.seconds;
+		fin.ignore();
+		fin >> departure.hour;
+		fin.ignore();
+		fin >> departure.minutes;
+		fin.ignore();
+		fin >> departure.seconds;
+		fin.ignore();
+		fin >> flightDate.day;
+		fin.ignore();
+		fin >> flightDate.month;
+		fin.ignore();
+		fin >> flightDate.year;
+		fin.ignore();
+
+		Ticket* tickets = new Ticket[availableTickets];
+		int ticketID = 0, passportNo = 0;
+		for (int j = 0; j < bookedTickets; j++)
+		{
+			fin >> ticketID;
+			fin >> passportNo;
+
+			tickets[j].setID(ticketID);
+			tickets[j].setPassportNumber(passportNo);
+
+			fin.ignore();
+		}
+		fin.ignore();
+
+		PlaneData[i].setAirlineName(airlineName);
+		PlaneData[i].setAirlineID(airlineID);
+		PlaneData[i].setCountry(country);
+		PlaneData[i].setCity(city);
+		PlaneData[i].setDate(flightDate);
+		PlaneData[i].setArrivalTime(arrival);
+		PlaneData[i].setDepartureTime(departure);
+		PlaneData[i].setAvailableTickets(availableTickets);
+		PlaneData[i].setBookedTickets(bookedTickets);
+		PlaneData[i].setFlightNumber(flightNo);
+		PlaneData[i].setStatusOfFlight(status);
+		PlaneData[i].setTicketArr(tickets);
+	}
+	fin.close();
+}
+void OutputPlaneData(Plane* PlaneData, const int totalPlanes, const string PlaneFile)
+{
+	ofstream fout;
+	fout.open(PlaneFile);
+	for (int i = 0; i < totalPlanes; i++)
+	{
+		Time arrival = PlaneData[i].getArrivalTime();
+		Time departure = PlaneData[i].getDepartureTime();
+		Date dateflight = PlaneData[i].getDate();
+		Ticket* tickets = PlaneData[i].getTickets();
+
+		fout << PlaneData[i].getAirlineName() << ", ";
+		fout << PlaneData[i].getAirlineID() << ", ";
+		fout << PlaneData[i].getCity() << ", ";
+		fout << PlaneData[i].getCountry() << ", ";
+		fout << PlaneData[i].getStatusOfFlight() << ", ";
+		fout << PlaneData[i].getAvailableTickets() << ", ";
+		fout << PlaneData[i].getBookedTickets() << ", ";
+		fout << PlaneData[i].getFlightNumber() << ", ";
+		fout << arrival.hour << ":" << arrival.minutes << ":" << arrival.seconds << ", ";
+		fout << departure.hour << ":" << departure.minutes << ":" << departure.seconds << ", ";
+		fout << dateflight.day << "/" << dateflight.month << "/" << dateflight.year << ", ";
+
+		for (int j = 0; j < (PlaneData[i].getBookedTickets()); j++)
+		{
+			fout << tickets[j].getID() << " " << tickets[j].getPassportNumber();
+			if (j == (PlaneData[i].getBookedTickets()) - 1)
+			{
+				fout << ".";
+			}
+			else
+			{
+				fout << ", ";
+			}
+		}
+		fout << endl;
+	}
 }
 ///////////////////////////////////////////////////////////SArmad's Functions end here///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////Haseeb's functions Start Here///////////////////////////////////////////////////////////////////////////////////////////
 
+Plane returnFlight(Plane* obj, const int totalPlanes, const int searchNum)	// If flight number same, returns the object with same flight number
+{
+	for (int counter = 0; counter < totalPlanes; counter++)
+	{
+		if (obj->getFlightNumber() == searchNum)
+		{
+			cout << "Flight Found!" << endl;
+			return obj[counter];
+		}
+	}
+	return Plane();
+}
+int returnFlightIndex(Plane* obj, const int totalPlanes,int tempFlightID)	// If flight number same, returns the object with same flight number
+{
+	int	index = -1;
+	for (int counter = 0; counter < totalPlanes; counter++)
+	{
+		if (obj->getFlightNumber() == tempFlightID)
+		{
+			cout << "Flight Found!" << endl;
+			index = counter;
+			break;
+
+		}
+		else
+		{
+			index = -1;
+		}
+	}
+	return index;
+	
+}
+void FlightDisplay(Plane obj)	// Displays specific flight sent as parameter
+{
+	Time tempTime = obj.getDepartureTime();
+	Date tempDate = obj.getDate();
+	cout << "Available number of booked Tickets: " << obj.getBookedTickets() << endl;
+	cout << "Available number of unbooked Tickets: " << obj.getUnbookedTickets() << endl;
+	cout << "Flight Status: " << obj.getStatusOfFlight() << endl;
+	cout << "Flight Number: " << obj.getFlightNumber() << endl;
+	cout << "Flight Date: " << tempDate.day << "/" << tempDate.month << "/" << tempDate.year << endl;
+	cout << "Departure Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl;
+	tempTime = obj.getArrivalTime();
+	cout << "Arrival Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl << endl;
+}
+void InputFlightDetails(Plane*& obj, const int position)
+{
+	string airlineName, city, country;
+	int airlineID, avaiableTickets, bookedTickets, flightID, ticketID, passportNum;
+	char status;
+	Time arrivalTime, departureTime;
+	Date newDate;
+
+	cin.ignore();
+	cout << "Enter the Airline Name: ";
+	getline(cin, airlineName);
+	cout << "Enter the Airline ID: ";
+	cin >> airlineID;
+	while (airlineID < 0)
+	{
+		cout << "Invalid Airline ID. Please enter again: ";
+		cin >> airlineID;
+	}
+	cin.ignore();
+	cout << "Enter the city of the flight: ";
+	getline(cin, city);
+	cin.ignore();
+	cout << "Enter the country of the flight: ";
+	getline(cin, country);
+	cout << "Enter the status of the flight: ";
+	cin >> status;
+	status = toupper(status);
+	while (status != 'C' && status != 'O' && status != 'M' && status != 'D')
+	{
+		cout << "Invalid status. Please enter again: ";
+		cin >> status;
+		status = toupper(status);
+	}
+	cout << "Enter the available number tickets of the flight: ";
+	cin >> avaiableTickets;
+	while (avaiableTickets < 0)
+	{
+		cout << "Invalid Airline ID. Please enter again: ";
+		cin >> avaiableTickets;
+	}
+	cout << "Enter the number of booked tickets of the flight: ";
+	cin >> bookedTickets;
+	while (bookedTickets < 0)
+	{
+		cout << "Invalid Airline ID. Please enter again: ";
+		cin >> bookedTickets;
+	}
+	cout << "Enter the flight ID: ";
+	cin >> flightID;
+	while (flightID < 0)
+	{
+		cout << "Invalid Airline ID. Please enter again: ";
+		cin >> flightID;
+	}
+
+	cout << "Enter the Date\n";
+	cout << "Enter Day: ";
+	cin >> newDate.day;
+	while (newDate.day < 0 || newDate.day > 31)
+	{
+		cout << "Invalid day entered. Please enter again: ";
+		cin >> newDate.day;
+	}
+	cout << "Enter Month: ";
+	cin >> newDate.month;
+	while (newDate.month < 0 || newDate.month > 12)
+	{
+		cout << "Invalid day entered. Please enter again: ";
+		cin >> newDate.month;
+	}
+	cout << "Enter year: ";
+	cin >> newDate.year;
+	while (newDate.year < 2022)
+	{
+		cout << "Invalid day entered. Please enter again: ";
+		cin >> newDate.year;
+	}
+
+	cout << "Enter the Arrival Time\n";
+	cout << "Enter hours: ";
+	cin >> arrivalTime.hour;
+	while (arrivalTime.hour > 24 || arrivalTime.hour < 0)
+	{
+		cout << "Invalid hours. Try again: ";
+		cin >> arrivalTime.hour;
+	}
+	cout << "Enter minutes: ";
+	cin >> arrivalTime.minutes;
+	while (arrivalTime.minutes > 60 || arrivalTime.minutes < 0)
+	{
+		cout << "Invalid minutes. Try again: ";
+		cin >> arrivalTime.minutes;
+	}
+	cout << "Enter seconds: ";
+	cin >> arrivalTime.seconds;
+	while (arrivalTime.seconds > 60 || arrivalTime.hour < 0)
+	{
+		cout << "Invalid seconds. Try again: ";
+		cin >> arrivalTime.seconds;
+	}
+
+	cout << "Enter the Departure Time\n";
+	cout << "Enter hours: ";
+	cin >> departureTime.hour;
+	while (departureTime.hour > 24 || departureTime.hour < 0)
+	{
+		cout << "Invalid hours. Try again: ";
+		cin >> departureTime.hour;
+	}
+	cout << "Enter minutes: ";
+	cin >> departureTime.minutes;
+	while (departureTime.minutes > 60 || departureTime.minutes < 0)
+	{
+		cout << "Invalid minutes. Try again: ";
+		cin >> departureTime.minutes;
+	}
+	cout << "Enter seconds: ";
+	cin >> departureTime.seconds;
+	while (departureTime.seconds > 60 || departureTime.hour < 0)
+	{
+		cout << "Invalid seconds. Try again: ";
+		cin >> departureTime.seconds;
+	}
+
+	Ticket* newArr = new Ticket[avaiableTickets];
+	for (int counter = 0; counter < avaiableTickets; counter++)
+	{
+		cout << "Enter Ticket ID: ";
+		cin >> ticketID;
+		while (ticketID < 0)
+		{
+			cout << "Invalid Ticket ID. Try again: ";
+			cin >> ticketID;
+		}
+		cout << "Enter the Passport Number: ";
+		cin >> passportNum;
+		while (passportNum < 0)
+		{
+			cout << "Invalid Passport Number. Try again: ";
+			cin >> passportNum;
+		}
+		cout << endl;
+		newArr[counter].setID(ticketID);
+		newArr[counter].setPassportNumber(passportNum);
+	}
+
+	obj[position].setAirlineID(airlineID);
+	obj[position].setAirlineName(airlineName);
+	obj[position].setCity(city);
+	obj[position].setCountry(country);
+	obj[position].setStatusOfFlight(status);
+	obj[position].setAvailableTickets(avaiableTickets);
+	obj[position].setBookedTickets(bookedTickets);
+	obj[position].setFlightNumber(flightID);
+	obj[position].setDate(newDate);
+	obj[position].setArrivalTime(arrivalTime);
+	obj[position].setDepartureTime(departureTime);
+	obj[position].setTicketArr(newArr);
+}
 
 
+Plane CompletedFlights(Plane obj)
+{
+	if (toupper(obj.getStatusOfFlight()) == 'C')
+		return obj;
+	else
+		return Plane();
+}
+void DisplayFlights(Plane* obj, const int totalPlanes)
+{
+	for (int counter = 0; counter < totalPlanes; counter++)
+	{
+		Time tempTime = obj[counter].getDepartureTime();
+		Date tempDate = obj[counter].getDate();
+		cout << "Available number of booked Tickets: " << obj[counter].getBookedTickets() << endl;
+		cout << "Available number of unbooked Tickets: " << obj[counter].getUnbookedTickets() << endl;
+		cout << "Flight Status: " << obj[counter].getStatusOfFlight() << endl;
+		cout << "Flight Number: " << obj[counter].getFlightNumber() << endl;
+		cout << "Flight Date: " << tempDate.day << "/" << tempDate.month << "/" << tempDate.year << endl;
+		cout << "Departure Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl;
+		tempTime = obj[counter].getArrivalTime();
+		cout << "Arrival Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl << endl;
+	}
+}
+void SearchFlights(Plane* obj, const int totalPlanes)
+{
+	system("CLS");
+	Plane tempObj;
+	int option = 0;
+	int tempChoice = 0;
+	int flightNum = 0;
+	bool Found = false;
+	string searchTemp;
 
+	cout << "What would you like to search by? " << endl;
+	cout << "1. By Flight Number" << endl;
+	cout << "2. By Location" << endl;
+	cout << "3. By Time" << endl;
+	cout << "4. By Airline" << endl;
+	cout << "5. By completed flights" << endl;
+	cout << "0. Exit Search Flights Menu" << endl;
+	cout << "=> ";
+	option = getChoice();
+	cout << endl;
+	system("CLS");
 
+	if (option == 1)
+	{
+		cout << "Enter the Flight Number: ";
+		cin >> flightNum;
+		while (flightNum < 0)
+		{
+			cout << "Invalid Flight Number has been entered. Please try again: ";
+			cin >> flightNum;
+		}
+		tempObj = returnFlight(obj, totalPlanes, flightNum);
+		if (tempObj.getAirlineID() != 0)
+			FlightDisplay(tempObj);
+	}
+	else if (option == 2)
+	{
+		cout << "Enter choice" << endl;
+		cout << "1. Search by City" << endl;
+		cout << "2. Search by Country\n=> ";
+		tempChoice = getChoice();
+		while (tempChoice <= 0 || tempChoice > 2)
+		{
+			cout << "Invalid choice. Please input again\n=> ";
+			tempChoice = getChoice();
+		}
+		system("CLS");
 
+		cin.ignore();
+		cout << "Enter search value: ";
+		getline(cin, searchTemp);
 
+		if (tempChoice == 1)
+		{
+			for (int counter = 0; counter < totalPlanes; counter++)
+			{
+				if (searchTemp.compare(obj[counter].getCity()) == 0)
+					FlightDisplay(obj[counter]);
+			}
+		}
+		else
+		{
+			for (int counter = 0; counter < totalPlanes; counter++)
+			{
+				if (searchTemp.compare(obj[counter].getCountry()) == 0)
+				{
+					FlightDisplay(obj[counter]);
+					Found = true;
+				}
+			}
+		}
+	}
+	else if (option == 3)
+	{
+		Time objTime;
+		Time objTime2;
+		cout << "Enter choice" << endl;
+		cout << "1. Search by Arrival Time" << endl;
+		cout << "2. Search by Departure Time\n=> ";
+		tempChoice = getChoice();
 
+		while (tempChoice <= 0 || tempChoice > 2)
+		{
+			cout << "Invalid choice. Please input again\n=> ";
+			tempChoice = getChoice();
+		}
+		system("CLS");
 
+		cout << "Enter hours: ";
+		cin >> objTime.hour;
+		while (objTime.hour > 24 || objTime.hour < 0)
+		{
+			cout << "Invalid hours. Try again: ";
+			cin >> objTime.hour;
+		}
+		cout << "Enter minutes: ";
+		cin >> objTime.minutes;
+		while (objTime.minutes > 60 || objTime.minutes < 0)
+		{
+			cout << "Invalid minutes. Try again: ";
+			cin >> objTime.minutes;
+		}
+		cout << "Enter seconds: ";
+		cin >> objTime.seconds;
+		while (objTime.seconds > 60 || objTime.hour < 0)
+		{
+			cout << "Invalid seconds. Try again: ";
+			cin >> objTime.seconds;
+		}
 
+		if (tempChoice == 1)
+		{
+			for (int counter = 0; counter < totalPlanes; counter++)
+			{
+				objTime2 = obj[counter].getArrivalTime();
+				if (objTime2.hour == objTime.hour && objTime2.minutes == objTime.minutes && objTime2.seconds == objTime.seconds)
+				{
+					FlightDisplay(obj[counter]);
+					Found = true;
+				}
+			}
+		}
+		else
+		{
+			for (int counter = 0; counter < totalPlanes; counter++)
+			{
+				objTime2 = obj[counter].getDepartureTime();
+				if (objTime2.hour == objTime.hour && objTime2.minutes == objTime.minutes && objTime2.seconds == objTime.seconds)
+				{
+					FlightDisplay(obj[counter]);
+					Found = true;
+				}
+			}
+		}
+	}
+	else if (option == 4)
+	{
 
+		cout << "Enter choice: " << endl;
+		cout << "1. Search by Airline Name" << endl;
+		cout << "2. Search by Airline ID\n=> ";
+		tempChoice = getChoice();
+		while (tempChoice < 0 || tempChoice>2)
+		{
+			cout << "Invalid Choice. Please try again\n=> ";
+			tempChoice = getChoice();
+		}
 
+		if (tempChoice == 1)
+		{
+			system("CLS");
 
+			string airlineName;
 
+			cin.ignore();
+			cout << "Enter the Airline Name: ";
+			getline(cin, airlineName);
 
+			for (int counter = 0; counter < totalPlanes; counter++)
+			{
+				if (airlineName.compare(obj[counter].getAirlineName()) == 0)
+				{
+					FlightDisplay(obj[counter]);
+					Found = true;
+				}
+			}
+		}
+		else
+		{
+			system("CLS");
 
+			int searchID;
 
+			cout << "Enter the Airline ID: ";
+			cin >> searchID;
+			while (searchID < 0)
+			{
+				cout << "Invalid Input. Please try again: ";
+				cin >> searchID;
+			}
 
+			for (int counter = 0; counter < totalPlanes; counter++)
+			{
+				if (searchID == obj[counter].getAirlineID())
+				{
+					FlightDisplay(obj[counter]);
+					Found = true;
+				}
+			}
+		}
+	}
+	else if (option == 5)
+	{
+		for (int counter = 0; counter < totalPlanes; counter++)
+		{
+			tempObj = CompletedFlights(obj[counter]);
+			if (tempObj.getAirlineID() != -1)
+			{
+				FlightDisplay(obj[counter]);
+				Found = true;
+			}
+		}
+	}
+	if (!Found)
+	{
+		cout << "No flight was found!" << endl;
+	}
+	cout << endl;
+}
+void EditFlightDetails(Plane*& obj, int& totalPlanes, const string fileName)
+{
+	system("CLS");
+	int flightID;
+	bool Found = false;
 
+	cout << "First search for the specific flight\n";
+	cout << "Enter the flight ID: ";
+	cin >> flightID;
 
+	while (flightID < 0)
+	{
+		cout << "Invalid flight ID. Please enter again: ";
+		cin >> flightID;
+	}
 
+	for (int counter = 0; counter < totalPlanes && !Found; counter++)
+	{
+		if (obj[counter].getFlightNumber() == flightID)
+		{
+			Found = true;
+			InputFlightDetails(obj, counter);
+			OutputPlaneData(obj, totalPlanes, fileName);
+			InputPlaneData(obj, totalPlanes, fileName);
+			FlightDisplay(obj[counter]);
+		}
+	}
+	if (!Found)
+		cout << "The Flight was not found!" << endl;
+	else
+		cout << "The Flight was found and edited!" << endl;
 
-
+	cout << endl;
+}
 
 //////////////////////////////////////////Haseeb's Functions end here///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -723,7 +1348,6 @@ bool CredentialsExist(Passenger* passenger, int& totalPassengers, User tempUser,
 	}
 	return credentialsExist;
 }
-
 bool CredentialsExist(Passenger* passenger, int& totalPassengers, string username)
 {
 	bool credentialsExist = false;
@@ -749,8 +1373,6 @@ bool CredentialsExist(Passenger* passenger, int& totalPassengers, long long int 
 	}
 	return credentialsExist;
 }
-
-
 bool LoginPortal(Admin  admin)
 {
 	User tempUser;
@@ -800,7 +1422,6 @@ bool LoginPortal(Admin  admin)
 
 	return isAdmin;
 }
-
 bool LoginPortal(Passenger* passenger, int totalPassengers,int& index)
 {
 	Passenger tempUser;
@@ -842,7 +1463,6 @@ bool LoginPortal(Passenger* passenger, int totalPassengers,int& index)
 	return isPassenger;
 
 }
-
 void InsertPassenger(Passenger* passenger, int& totalPassengers, string PassengerFile, Passenger newPassenger)
 {
 
@@ -945,7 +1565,7 @@ Passenger SignUp(Passenger* passenger, int& totalPassengers,string PassengerFile
 	cin >> tempPassword;
 	newPassenger.setPassword(tempPassword);
 
-	cout << "\Passenger Name: ";
+	cout << "\nPassenger Name: ";
 	cin >> tempPassengerName;
 	newPassenger.SetPassengerName(tempPassengerName);
 
@@ -974,24 +1594,24 @@ Passenger SignUp(Passenger* passenger, int& totalPassengers,string PassengerFile
 	return newPassenger;
 	
 }
-int SearchPassenger(Passenger* passenger, int& totalPassengers, string username)
-{
-	for (int i = 0; i < totalPassengers; i++)
-	{
-		if (passenger[i].getUsername() == username)
-		{
-			break;
-			return i;
-		}
-		else
-		{
-			cout << "The user doesn't exist\n";
-			system("pause");
-			i = -1;
-			return i;
-		}
-	}
-}
+//int SearchPassenger(Passenger* passenger, int& totalPassengers, string username)
+//{
+//	for (int i = 0; i < totalPassengers; i++)
+//	{
+//		if (passenger[i].getUsername() == username)
+//		{
+//			break;
+//			return i;
+//		}
+//		else
+//		{
+//			cout << "The user doesn't exist\n";
+//			system("pause");
+//			i = -1;
+//			return i;
+//		}
+//	}
+//}
 void EditUsername(Passenger* passenger, int& totalPassengers, int index)
 {
 	string tempUsername;
@@ -1051,22 +1671,56 @@ void EditNationality(Passenger* passenger, int& totalPassengers, int index)
 
 	cout << "New Information:\n" << passenger[index] << endl;
 }
-void EditTotalTickets(Passenger* passenger, int& totalPassengers, int index)
-{
-	int tempTotalTickets = 0;
-	cout << "Enter New Number of Total Tickets\n";
-	cout << "=>";
-	cin >> tempTotalTickets;
-	passenger[index].SetTicketsBooked(tempTotalTickets);
-
-}
-void EditTicketIDs(Passenger* passenger, int& totalPassengers, int index)
-{
-	int* tempticketId;
-	///////////////////Continuefrom here
-
-}
-
+//void EditTotalTickets(Passenger* passenger, int& totalPassengers, int index)
+//{
+//	int tempTotalTickets = 0;
+//	cout << "Enter New Number of Total Tickets\n";
+//	cout << "=>";
+//	cin >> tempTotalTickets;
+//	passenger[index].SetTicketsBooked(tempTotalTickets);
+//
+//}
+//void AddTicket(Passenger* passenger, int& totalPassengers, int index)
+//{
+//	int newTicketID=0;
+//	cout << "Enter New Ticket Id\n";
+//	cout << "=>";
+//	cin >> newTicketID;
+//
+//
+//
+//	int* tempTicketIds = new int[totalPassengers + 1];
+//	tempTicketIds = passenger[index].GetTicketIds();
+//	passenger[index].DeleteTicketIds();
+//
+//	tempTicketIds[totalPassengers] = newTicketID;
+//	passenger[index].SetTicketIds(tempTicketIds);
+//
+//	
+//	
+//}
+//void DeleteTicket(Passenger* passenger, int& totalPassengers, int index)
+//{
+//
+//}
+//void EditTicketIDs(Passenger* passenger, int& totalPassengers, int index)
+//{
+//	int choice = -1;
+//	int* tempticketId;
+//	///////////////////Continuefrom here
+//
+//	choice = EditTicketMenu();
+//
+//	if (choice == 1)
+//	{
+//		AddTicket(passenger,totalPassengers,index);
+//	}
+//	else if (choice == 2)
+//	{
+//		DeleteTicket(passenger, totalPassengers, index);
+//	}
+//
+//}
 void EditPassengerDetails(Passenger* passenger, int& totalPassengers,int index)
 {
 	int choice = 0;
@@ -1092,8 +1746,6 @@ void EditPassengerDetails(Passenger* passenger, int& totalPassengers,int index)
 	cout << "2. Password" << endl;
 	cout << "3. Passenger Name" << endl;
 	cout << "4. Nationality" << endl;
-	cout << "5. Total Tickets" << endl;
-	cout << "6. Ticket Ids" << endl;
 	cout << "=> ";
 	choice = getChoice();
 
@@ -1113,18 +1765,125 @@ void EditPassengerDetails(Passenger* passenger, int& totalPassengers,int index)
 	{
 		EditNationality(passenger, totalPassengers, index);
 	}
-	if (choice == 5)
-	{
-		EditTotalTickets(passenger, totalPassengers, index);
-	}
-	if (choice == 6)
-	{
-		EditTicketIDs(passenger, totalPassengers, index);
-	}
+	//if (choice == 5)
+	//{
+	//	EditTotalTickets(passenger, totalPassengers, index);
+	//}
+	//if (choice == 6)
+	//{
+	//	EditTicketIDs(passenger, totalPassengers, index);
+	//}
 
 
 }
+bool TicketAvailable(Plane*& obj, int FlightNum, int ticketID)
+{
+	bool ticketAvailable = true;
+	Ticket* tempTickets = obj[FlightNum].getTickets();
 
+	for (int i = 0; i < obj[FlightNum].getBookedTickets(); i++)
+	{
+		if (ticketID == tempTickets[i].getID())
+		{
+			ticketAvailable = false;
+			break;
+		}
+	}
+
+	return ticketAvailable;
+}
+void InputFlightDetails(Plane*& obj, const int FlightNum, long long int passportno)
+{
+
+	int avaiableTickets, bookedTickets, ticketID, passportNum;
+
+	Ticket tempTicket;
+	bookedTickets = obj[FlightNum].getBookedTickets();
+	bookedTickets++;
+	obj[FlightNum].setBookedTickets(bookedTickets);
+
+	
+	cout << "Enter Ticket ID\n";
+	ticketID = getChoice();
+
+	while (!TicketAvailable(obj, FlightNum, ticketID))
+	{
+		cout << "Ticket ID already exists\n";
+		cout << "Enter Ticket ID\n";
+		ticketID = getChoice();
+
+	}
+	if (TicketAvailable(obj, FlightNum, ticketID))
+	{
+		tempTicket.setID(ticketID);
+	}
+	tempTicket.setPassportNumber(passportno);
+	
+
+	Ticket* newArr = obj[FlightNum].getTickets();
+	newArr[bookedTickets - 1] = tempTicket;
+	obj[FlightNum].setTicketArr(newArr);
+	cout << "\nCongratulations your flight is booked\n";
+
+}
+bool FlightExists(Plane*& obj, int& totalPlanes, int flightNum)
+{
+	bool flightExist = false;
+	for (int i = 0; i < totalPlanes; i++)
+	{
+		if (flightNum == obj[i].getFlightNumber())
+		{
+			flightExist = true;
+			break;
+		}
+	}
+	return flightExist;
+}
+int GetFlightID(Plane*& obj, int& totalPlanes)
+{
+	int flightNum=0;
+
+	cout << "Enter Flight Num:";
+	flightNum = getChoice();
+	while (!FlightExists(obj, totalPlanes, flightNum))
+	{
+		if (FlightExists(obj, totalPlanes, flightNum))
+		{
+			return flightNum;
+		}
+		else if (!FlightExists(obj, totalPlanes, flightNum))
+		{
+			cout << "Invalid Flight Num: \n";
+			cout << "Enter Flight Num:";
+			flightNum = getChoice();
+
+		}
+	}
+	
+}
+void BookTickets(Plane*& obj, int& totalPlanes, const string fileName, long long int passportno)
+{
+	int flightNum = 0, flightIndex = -1;
+	//use search fliights instead
+	DisplayFlights(obj, totalPlanes);
+	flightNum = GetFlightID(obj, totalPlanes);
+	flightIndex = returnFlightIndex(obj, totalPlanes, flightNum);
+
+	while (obj[flightIndex].getBookedTickets() == obj[flightIndex].getAvailableTickets())
+	{
+		if (obj[flightIndex].getBookedTickets() == obj[flightIndex].getAvailableTickets())
+		{
+			cout << "The Flight is full \n";
+			DisplayFlights(obj, totalPlanes);
+			flightNum = GetFlightID(obj, totalPlanes);
+			flightIndex = returnFlightIndex(obj, totalPlanes, flightNum);
+
+		}
+	}
+	InputFlightDetails(obj, flightIndex, passportno);
+	
+
+}
 
 
 int main()
@@ -1133,28 +1892,35 @@ int main()
 	bool isPassenger = false;
 	string passengerFile, PlaneFile;
 	int totalPassengers = 0, totalPlanes = 0;
-
+	int choice = 0, choice2 = 0,choice3=0;
 	Passenger newPassenger;
 	int index = -1;
-	
-	PassengerFileName(passengerFile);
-	//PlaneFileName(PlaneFile);
-
 	Passenger* PassengerData;
-	InputPassengerData(PassengerData, totalPassengers, passengerFile);
+	Plane* PlaneData = nullptr;
 	Admin Admin1("sussybaka", "juba", "Susmad");
+	PlaneFileName(PlaneFile);
+	PassengerFileName(passengerFile);
+
+	InputPassengerData(PassengerData, totalPassengers, passengerFile);
+	InputPlaneData(PlaneData, totalPlanes, PlaneFile);
 	
-	// To check if correct passenger input is being saved
-	for (int i = 0; i < totalPassengers; i++)
-	{
-		cout << PassengerData[i]<<endl;
-	}
-	system("pause");
+
+	
+	
+
+	//DisplayFlights(PlaneData, totalPlanes);
+	//SearchFlights(PlaneData, totalPlanes);
+	//EditFlightDetails(PlaneData, totalPlanes, PlaneFile);
+	//DisplayFlights(PlaneData, totalPlanes);
 
 
 
 
-	int choice = 0, choice2 = 0;
+
+	
+	
+
+
 
 	// Testing everything
 	choice=MainMenu();
@@ -1177,10 +1943,25 @@ int main()
 			isPassenger=LoginPortal(PassengerData,totalPassengers,index);
 			if (isPassenger)
 			{
-				PassengerMenu();
-				EditPassengerDetails(PassengerData, totalPassengers,index);
-				InsertPassenger(PassengerData, totalPassengers, passengerFile);
+				choice3 = PassengerMenu();
+				if (choice3 == 1)
+				{
+					EditPassengerDetails(PassengerData, totalPassengers, index);
+					InsertPassenger(PassengerData, totalPassengers, passengerFile);
+				}
+
+
+				else if (choice3 == 2)
+				{
+					long long int tempPassportNo = PassengerData[index].GetPassportNo();
+					BookTickets(PlaneData, totalPlanes, PlaneFile, tempPassportNo);
+					OutputPlaneData(PlaneData, totalPlanes, PlaneFile);
+					InputPlaneData(PlaneData, totalPlanes, PlaneFile);
+					//EditPassengerTickets(PlaneData, totalPlanes, PassengerData, index);
+					InsertPassenger(PassengerData, totalPassengers, passengerFile);
+				}
 			}
+
 		}
 		else if (choice2 == 2)
 		{
@@ -1191,13 +1972,9 @@ int main()
 		}
 	}
 	
-	//check if the the data input and stored is correct
-	/*for (int i = 0; i < totalPassengers; i++)
-	{
-		cout << PassengerData[i]<<endl;
-	}*/
-	
 
 	
+	
+
 	return 0;
 }
