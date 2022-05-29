@@ -860,7 +860,7 @@ void FlightDisplay(Plane obj)	// Displays specific flight sent as parameter
 	tempTime = obj.getArrivalTime();
 	cout << "Arrival Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl << endl;
 }
-void InputFlightDetails(Plane*& obj, const int position)
+void InputFlightDetails(Plane*& obj,int totalPlanes, const int position)
 {
 	string airlineName, city, country;
 	int airlineID, avaiableTickets, bookedTickets, flightID, ticketID, passportNum;
@@ -877,6 +877,15 @@ void InputFlightDetails(Plane*& obj, const int position)
 	{
 		cout << "Invalid Airline ID. Please enter again: ";
 		cin >> airlineID;
+	}
+	for (int counter = 0;counter < totalPlanes;counter++)
+	{
+		if (airlineID == obj[counter].getAirlineID())
+		{
+			cout << "Same Airline ID. Please enter again: ";
+			cin >> airlineID;
+			counter--;
+		}
 	}
 	cin.ignore();
 	cout << "Enter the city of the flight: ";
@@ -913,6 +922,15 @@ void InputFlightDetails(Plane*& obj, const int position)
 	{
 		cout << "Invalid Airline ID. Please enter again: ";
 		cin >> flightID;
+	}
+	for (int counter = 0;counter < totalPlanes;counter++)
+	{
+		if (flightID == obj[counter].getFlightNumber())
+		{
+			cout << "Same Airline ID. Please enter again: ";
+			cin >> flightID;
+			counter--;
+		}
 	}
 
 	cout << "Enter the Date\n";
@@ -1251,7 +1269,7 @@ void SearchFlights(Plane* obj, const int totalPlanes)
 	}
 	cout << endl;
 }
-void EditFlightDetails(Plane*& obj, int& totalPlanes, const string fileName)
+void EditFlightDetails(Plane*& obj, int totalPlanes, const string fileName)
 {
 	system("CLS");
 	int flightID;
@@ -1272,7 +1290,7 @@ void EditFlightDetails(Plane*& obj, int& totalPlanes, const string fileName)
 		if (obj[counter].getFlightNumber() == flightID)
 		{
 			Found = true;
-			InputFlightDetails(obj, counter);
+			InputFlightDetails(obj,totalPlanes, counter);
 			OutputPlaneData(obj, totalPlanes, fileName);
 			InputPlaneData(obj, totalPlanes, fileName);
 			FlightDisplay(obj[counter]);
@@ -1284,6 +1302,23 @@ void EditFlightDetails(Plane*& obj, int& totalPlanes, const string fileName)
 		cout << "The Flight was found and edited!" << endl;
 		
 	cout << endl;
+}
+Ticket* SearchTicketIDs(Ticket* arrTicket,const int availableTickets, const int passportNum)
+{
+	Ticket* tempTicket = new Ticket[availableTickets];
+	bool atleastOne = false;
+	int count = 0;
+
+	for (int counter = 0;counter < availableTickets;counter++)
+	{
+		if (arrTicket[counter].getPassportNumber() == passportNum)
+		{
+			tempTicket[count].setID(arrTicket[counter].getID());
+			atleastOne = true;
+			count++;
+		}
+	}
+	return tempTicket;
 }
 
 //////////////////////////////////////////Haseeb's Functions end here///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
