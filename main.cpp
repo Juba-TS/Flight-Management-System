@@ -1944,7 +1944,7 @@ int main()
 			if (isPassenger)
 			{
 				choice3 = PassengerMenu();
-				if (choice3 == 1)
+				if (choice3 == 3)
 				{
 					EditPassengerDetails(PassengerData, totalPassengers, index);
 					InsertPassenger(PassengerData, totalPassengers, passengerFile);
