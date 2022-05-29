@@ -46,7 +46,7 @@ public:
 	{
 		return password;
 	}
-	
+
 	bool operator == (const User& newUser)
 	{
 		if (username == newUser.username && password == newUser.password)
@@ -169,14 +169,14 @@ public:
 	friend ostream& operator << (ostream& out, const Passenger& newPasenger);
 	friend ostream& operator << (ostream& out, const Passenger& newPasenger);
 	//friend istream& operator >> (istream& in, const Passenger& newPasenger);
-	
+
 
 
 };
 ostream& operator << (ostream& out, Passenger& newPassenger)
 {
 
-	
+
 	cout << newPassenger.getUsername() << ", ";
 	cout << newPassenger.getPassword() << ", ";
 	cout << newPassenger.GetPassengerName() << ", ";
@@ -228,7 +228,7 @@ public:
 		return adminName;
 	}
 
-	
+
 };
 
 class Ticket
@@ -566,10 +566,10 @@ int MainMenu()
 	cout << "=> ";
 	choice = getChoice();
 	return choice;
-	
+
 }
 int SignInMenu()
-{	
+{
 	int choice = 0;
 	system("CLS");
 	cout << "Choose whatever you would like to do:" << endl;
@@ -867,26 +867,6 @@ Plane returnFlight(Plane* obj, const int totalPlanes, const int searchNum)	// If
 	}
 	return Plane();
 }
-int returnFlightIndex(Plane* obj, const int totalPlanes,int tempFlightID)	// If flight number same, returns the object with same flight number
-{
-	int	index = -1;
-	for (int counter = 0; counter < totalPlanes; counter++)
-	{
-		if (obj->getFlightNumber() == tempFlightID)
-		{
-			cout << "Flight Found!" << endl;
-			index = counter;
-			break;
-
-		}
-		else
-		{
-			index = -1;
-		}
-	}
-	return index;
-	
-}
 void FlightDisplay(Plane obj)	// Displays specific flight sent as parameter
 {
 	Time tempTime = obj.getDepartureTime();
@@ -1083,6 +1063,7 @@ void DisplayFlights(Plane* obj, const int totalPlanes)
 		tempTime = obj[counter].getArrivalTime();
 		cout << "Arrival Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl << endl;
 	}
+	system("pause");
 }
 void SearchFlights(Plane* obj, const int totalPlanes)
 {
@@ -1339,7 +1320,7 @@ bool CredentialsExist(Passenger* passenger, int& totalPassengers, User tempUser,
 
 	for (int i = 0; i < totalPassengers; i++)
 	{
-		if (tempUser==passenger[i])
+		if (tempUser == passenger[i])
 		{
 			credentialsExist = true;
 			idx = i;
@@ -1366,9 +1347,9 @@ bool CredentialsExist(Passenger* passenger, int& totalPassengers, long long int 
 	bool credentialsExist = false;
 	for (int i = 0; i < totalPassengers; i++)
 	{
-		if(passportNo==passenger[i].GetPassportNo())
-		credentialsExist = true;
-		
+		if (passportNo == passenger[i].GetPassportNo())
+			credentialsExist = true;
+
 		break;
 	}
 	return credentialsExist;
@@ -1422,7 +1403,7 @@ bool LoginPortal(Admin  admin)
 
 	return isAdmin;
 }
-bool LoginPortal(Passenger* passenger, int totalPassengers,int& index)
+bool LoginPortal(Passenger* passenger, int totalPassengers, int& index)
 {
 	Passenger tempUser;
 	string tempUsername;
@@ -1455,11 +1436,11 @@ bool LoginPortal(Passenger* passenger, int totalPassengers,int& index)
 	if (CredentialsExist(passenger, totalPassengers, tempUser, index))
 	{
 		isPassenger = true;
-				tempUser.SetPassengerName(passenger[index].GetPassengerName());
-				cout << system("CLS");
-				cout << tempUser.GetPassengerName() << " Welcome to Flight Management System \n";
-				system("pause");
-		
+		tempUser.SetPassengerName(passenger[index].GetPassengerName());
+		cout << system("CLS");
+		cout << tempUser.GetPassengerName() << " Welcome to Flight Management System \n";
+		system("pause");
+
 	}
 	return isPassenger;
 
@@ -1469,7 +1450,7 @@ void InsertPassenger(Passenger* passenger, int& totalPassengers, string Passenge
 
 	ofstream fout;
 	fout.open(PassengerFile);
-	
+
 	for (int i = 0; i < totalPassengers; i++)
 	{
 		fout << passenger[i].getUsername() << ", ";
@@ -1484,9 +1465,9 @@ void InsertPassenger(Passenger* passenger, int& totalPassengers, string Passenge
 			fout << " " << tickets[j];
 		}
 		fout << ".\n";
-		
+
 	}
-	
+
 	fout << newPassenger.getUsername() << ", ";
 	fout << newPassenger.getPassword() << ", ";
 	fout << newPassenger.GetPassengerName() << ", ";
@@ -1527,7 +1508,7 @@ void InsertPassenger(Passenger* passenger, int& totalPassengers, string Passenge
 	fout.close();
 
 }
-Passenger SignUp(Passenger* passenger, int& totalPassengers,string PassengerFile)
+Passenger SignUp(Passenger* passenger, int& totalPassengers, string PassengerFile)
 {
 	Passenger newPassenger;
 	string tempUsername;
@@ -1593,7 +1574,7 @@ Passenger SignUp(Passenger* passenger, int& totalPassengers,string PassengerFile
 		newPassenger.SetPassportNo(tempPassportNo);
 	}
 	return newPassenger;
-	
+
 }
 //int SearchPassenger(Passenger* passenger, int& totalPassengers, string username)
 //{
@@ -1634,7 +1615,7 @@ void EditUsername(Passenger* passenger, int& totalPassengers, int index)
 
 	} while (CredentialsExist(passenger, totalPassengers, tempUsername));
 
-	cout << "New Information:\n" << passenger[index]<<endl;
+	cout << "New Information:\n" << passenger[index] << endl;
 }
 void EditPassword(Passenger* passenger, int& totalPassengers, int index)
 {
@@ -1722,21 +1703,11 @@ void EditNationality(Passenger* passenger, int& totalPassengers, int index)
 //	}
 //
 //}
-void EditPassengerDetails(Passenger* passenger, int& totalPassengers,int index)
+void EditPassengerDetails(Passenger* passenger, int& totalPassengers, int index)
 {
 	int choice = 0;
-	
-	//string tempUsername;
-	//int index=-1;
-	//while (index == -1)
-	//{
-	//	system("CLS");
-	//	cout << "Enter the username of the passenger you want to edit\n";
-	//	cout << "=>";
-	//	cin >> tempUsername;
 
-	//	index = SearchPassenger(passenger, totalPassengers, tempUsername);
-	//}
+	
 	cout << "User information:\n";
 	cout << passenger[index];
 	cout << endl;
@@ -1793,6 +1764,26 @@ bool TicketAvailable(Plane*& obj, int FlightNum, int ticketID)
 
 	return ticketAvailable;
 }
+int returnFlightIndex(Plane* obj, const int totalPlanes, int tempFlightID)	// If flight number same, returns the object with same flight number
+{
+	int	index = -1;
+	for (int counter = 0; counter < totalPlanes; counter++)
+	{
+		if (obj[counter].getFlightNumber() == tempFlightID)
+		{
+			cout << "Flight Found!" << endl;
+			index = counter;
+			break;
+
+		}
+		else
+		{
+			index = -1;
+		}
+	}
+	return index;
+
+}
 void InputFlightDetails(Plane*& obj, const int FlightNum, long long int passportno)
 {
 
@@ -1803,7 +1794,7 @@ void InputFlightDetails(Plane*& obj, const int FlightNum, long long int passport
 	bookedTickets++;
 	obj[FlightNum].setBookedTickets(bookedTickets);
 
-	
+
 	cout << "Enter Ticket ID\n";
 	ticketID = getChoice();
 
@@ -1819,7 +1810,7 @@ void InputFlightDetails(Plane*& obj, const int FlightNum, long long int passport
 		tempTicket.setID(ticketID);
 	}
 	tempTicket.setPassportNumber(passportno);
-	
+
 
 	Ticket* newArr = obj[FlightNum].getTickets();
 	newArr[bookedTickets - 1] = tempTicket;
@@ -1842,7 +1833,7 @@ bool FlightExists(Plane*& obj, int& totalPlanes, int flightNum)
 }
 int GetFlightID(Plane*& obj, int& totalPlanes)
 {
-	int flightNum=0;
+	int flightNum = 0;
 
 	cout << "Enter Flight Num:";
 	flightNum = getChoice();
@@ -1860,7 +1851,7 @@ int GetFlightID(Plane*& obj, int& totalPlanes)
 
 		}
 	}
-	
+	return flightNum;
 }
 void BookTickets(Plane*& obj, int& totalPlanes, const string fileName, long long int passportno)
 {
@@ -1869,7 +1860,7 @@ void BookTickets(Plane*& obj, int& totalPlanes, const string fileName, long long
 	DisplayFlights(obj, totalPlanes);
 	flightNum = GetFlightID(obj, totalPlanes);
 	flightIndex = returnFlightIndex(obj, totalPlanes, flightNum);
-
+	
 	while (obj[flightIndex].getBookedTickets() == obj[flightIndex].getAvailableTickets())
 	{
 		if (obj[flightIndex].getBookedTickets() == obj[flightIndex].getAvailableTickets())
@@ -1882,7 +1873,7 @@ void BookTickets(Plane*& obj, int& totalPlanes, const string fileName, long long
 		}
 	}
 	InputFlightDetails(obj, flightIndex, passportno);
-	
+
 
 }
 
@@ -1934,17 +1925,18 @@ int PassengerTickets(Ticket* arrTicket, const int availableTickets, const int pa
 void EditPassengerTickets(Plane*& obj, const int totalPlanes, Passenger*& PassengerData, int index)
 {
 	int totalbookedTickets = 0;
-	
-	
+
+
 
 	for (int i = 0; i < totalPlanes; i++)
 	{
-		totalbookedTickets+= PassengerTickets(obj[i].getTickets(), obj[i].getBookedTickets(), PassengerData[index].GetPassportNo());
+		totalbookedTickets += PassengerTickets(obj[i].getTickets(), obj[i].getBookedTickets(), PassengerData[index].GetPassportNo());
 	}
+
 	int* passengersticket = new int[totalbookedTickets];
-	Ticket* tempTicket=0;
+	Ticket* tempTicket = 0;
+
 	
-		//tempTicket[i]=new Ticket[]
 	for (int i = 0; i < totalbookedTickets;)
 	{
 		for (int j = 0; j < totalPlanes; j++)
@@ -1956,8 +1948,11 @@ void EditPassengerTickets(Plane*& obj, const int totalPlanes, Passenger*& Passen
 			}
 			for (int k = 0; k < obj[j].getBookedTickets(); k++)
 			{
-				passengersticket[i]=tempTicket[k].getID();
-				i++;
+				if (tempTicket[k].getID() != 0)
+				{
+					passengersticket[i] = tempTicket[k].getID();
+					i++;
+				}
 			}
 
 		}
@@ -1974,34 +1969,37 @@ int main()
 	bool isPassenger = false;
 	string passengerFile, PlaneFile;
 	int totalPassengers = 0, totalPlanes = 0;
-	int userchoice = 0, signInChoice = 0,choice3=0;
+	int userchoice = 0, signInChoice = 0, choice3 = 0;
 	Passenger newPassenger;
 	int index = -1;
 	Passenger* PassengerData;
 	Plane* PlaneData = nullptr;
 	Admin Admin1("sussybaka", "juba", "Susmad");
+	
+
 	PlaneFileName(PlaneFile);
 	PassengerFileName(passengerFile);
 
 	InputPassengerData(PassengerData, totalPassengers, passengerFile);
 	InputPlaneData(PlaneData, totalPlanes, PlaneFile);
-	
 
-	
-	
 
-	//DisplayFlights(PlaneData, totalPlanes);
+
+
+
+	DisplayFlights(PlaneData, totalPlanes);
+
 	//SearchFlights(PlaneData, totalPlanes);
 	//EditFlightDetails(PlaneData, totalPlanes, PlaneFile);
 	//DisplayFlights(PlaneData, totalPlanes);
-	
+
 	// Testing everything
-	userchoice=MainMenu();
+	userchoice = MainMenu();
 
 	if (userchoice == 1)
 	{
-		isAdmin=LoginPortal(Admin1);
-		if(isAdmin)
+		isAdmin = LoginPortal(Admin1);
+		if (isAdmin)
 		{
 			AdminMenu();
 		}
@@ -2009,10 +2007,10 @@ int main()
 	}
 	else  if (userchoice == 2)
 	{
-		signInChoice=SignInMenu();
+		signInChoice = SignInMenu();
 		if (signInChoice == 1)
 		{
-			isPassenger=LoginPortal(PassengerData,totalPassengers,index);
+			isPassenger = LoginPortal(PassengerData, totalPassengers, index);
 			if (isPassenger)
 			{
 				choice3 = PassengerMenu();
@@ -2039,13 +2037,13 @@ int main()
 		}
 		else if (signInChoice == 2)
 		{
-			newPassenger=SignUp(PassengerData,totalPassengers,passengerFile);
+			newPassenger = SignUp(PassengerData, totalPassengers, passengerFile);
 			InsertPassenger(PassengerData, totalPassengers, passengerFile, newPassenger);
 			InputPassengerData(PassengerData, totalPassengers, passengerFile);
 
 		}
 	}
-	
+
 
 	return 0;
 }
