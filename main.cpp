@@ -1962,6 +1962,14 @@ void EditPassengerTickets(Plane*& obj, const int totalPlanes, Passenger*& Passen
 	PassengerData[index].SetTicketIds(passengersticket);
 
 }
+void DisplayPassengerDetails(Passenger* passenger, int& totalPassengers)
+{
+	for (int i = 0; i < totalPassengers; i++)
+	{
+		cout << passenger[i];
+	}
+}
+
 
 int main()
 {
@@ -1989,6 +1997,8 @@ int main()
 
 	DisplayFlights(PlaneData, totalPlanes);
 
+
+	
 	//SearchFlights(PlaneData, totalPlanes);
 	//EditFlightDetails(PlaneData, totalPlanes, PlaneFile);
 	//DisplayFlights(PlaneData, totalPlanes);
