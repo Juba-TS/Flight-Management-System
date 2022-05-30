@@ -797,6 +797,14 @@ void InputPlaneData(Plane*& PlaneData, int& totalPlanes, string PlaneFile)
 
 			fin.ignore();
 		}
+
+		if (bookedTickets == 0)
+		{
+			fin >> ticketID;
+			fin >> passportNo;
+
+			fin.ignore();
+		}
 		fin.ignore();
 
 		PlaneData[i].setAirlineName(airlineName);
@@ -849,9 +857,16 @@ void OutputPlaneData(Plane* PlaneData, const int totalPlanes, const string Plane
 				fout << ", ";
 			}
 		}
+
+		if (PlaneData[i].getBookedTickets() == 0)
+		{
+			fout << "0 0.";
+		}
 		fout << endl;
 	}
+	fout.close();
 }
+
 ///////////////////////////////////////////////////////////SArmad's Functions end here///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////Haseeb's functions Start Here///////////////////////////////////////////////////////////////////////////////////////////
