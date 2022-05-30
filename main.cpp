@@ -1034,9 +1034,36 @@ void AddFlights(Plane*& PlaneData, int& totalPlanes, const string PlaneFile)
 	cout << "Flight has been added." << endl << endl;
 	system("pause");
 }
-void RemoveFlight(Plane*& PlaneData, int& totalPlanes, string PlaneFile)
+
+void InsertPassenger(Passenger* passenger, int& totalPassengers, string PassengerFile)
 {
-	int ID = 0;
+
+	ofstream fout;
+	fout.open(PassengerFile);
+
+	for (int i = 0; i < totalPassengers; i++)
+	{
+		fout << passenger[i].getUsername() << ", ";
+		fout << passenger[i].getPassword() << ", ";
+		fout << passenger[i].GetPassengerName() << ", ";
+		fout << passenger[i].GetNationality() << ", ";
+		fout << passenger[i].GetPassportNo() << ", ";
+		fout << passenger[i].GetTicketsBooked() << ",";
+		int* tickets = passenger[i].GetTicketIds();
+		for (int j = 0; j < passenger[i].GetTicketsBooked(); j++)
+		{
+			fout << " " << tickets[j];
+		}
+		fout << ".\n";
+
+	}
+	fout.close();
+
+}
+
+void RemoveFlight(Plane*& PlaneData, int& totalPlanes, Passenger* &PassengerData, int totalPassengers, string PlaneFile, string PassengerFile)
+{
+	int ID = 0, IDindex = -1;
 	bool IDfound = false;
 	cout << "Enter the Flight ID of the flight you want to remove: ";
 	cin >> ID;
@@ -1046,6 +1073,7 @@ void RemoveFlight(Plane*& PlaneData, int& totalPlanes, string PlaneFile)
 		if (PlaneData[i].getFlightNumber() == ID)
 		{
 			IDfound = true;
+			IDindex = i;
 			break;
 		}
 	}
@@ -1053,11 +1081,50 @@ void RemoveFlight(Plane*& PlaneData, int& totalPlanes, string PlaneFile)
 	if (!IDfound)
 	{
 		cout << "\nNo flight with such ID exists!\n\n";
+		system("pause");
 		return;
 	}
 	totalPlanes--;
 	Plane* temp = new Plane[totalPlanes];
 	Ticket* ticket = nullptr;
+	Ticket* RemoveTickets = PlaneData[IDindex].getTickets();
+
+	for (int j = 0; j < PlaneData[IDindex].getBookedTickets(); j++)
+	{
+		for (int i = 0; i < totalPassengers; i++)
+		{
+			for (int k = 0; k < PassengerData[i].GetTicketsBooked(); k++)
+			{
+				bool TicketFound = false;
+				int* bookedTickets = PassengerData[i].GetTicketIds();
+				if (RemoveTickets[j].getID() == bookedTickets[k])
+				{
+					TicketFound = true;
+				}
+				if (TicketFound)
+				{
+					PassengerData[i].SetTicketsBooked(PassengerData[i].GetTicketsBooked() - 1);
+					int* temp = new int[PassengerData[i].GetTicketsBooked()];
+
+					for (int l = 0, m = 0; l < PassengerData[i].GetTicketsBooked() + 1 && m < PassengerData[i].GetTicketsBooked(); l++)
+					{
+						if (bookedTickets[l] == RemoveTickets[j].getID())
+						{
+							continue;
+						}
+
+						temp[m] = bookedTickets[l];
+						m++;
+					}
+					PassengerData[i].SetTicketIds(temp);
+					temp = nullptr;
+					k = 0;
+				}
+			}
+		}
+	}
+	
+	InsertPassenger(PassengerData, totalPassengers, PassengerFile);
 
 	for (int i = 0, j = 0; i < totalPlanes + 1; i++)
 	{
@@ -1754,31 +1821,7 @@ void InsertPassenger(Passenger* passenger, int& totalPassengers, string Passenge
 	fout.close();
 
 }
-void InsertPassenger(Passenger* passenger, int& totalPassengers, string PassengerFile)
-{
 
-	ofstream fout;
-	fout.open(PassengerFile);
-
-	for (int i = 0; i < totalPassengers; i++)
-	{
-		fout << passenger[i].getUsername() << ", ";
-		fout << passenger[i].getPassword() << ", ";
-		fout << passenger[i].GetPassengerName() << ", ";
-		fout << passenger[i].GetNationality() << ", ";
-		fout << passenger[i].GetPassportNo() << ", ";
-		fout << passenger[i].GetTicketsBooked() << ",";
-		int* tickets = passenger[i].GetTicketIds();
-		for (int j = 0; j < passenger[i].GetTicketsBooked(); j++)
-		{
-			fout << " " << tickets[j];
-		}
-		fout << ".\n";
-
-	}
-	fout.close();
-
-}
 Passenger SignUp(Passenger* passenger, int& totalPassengers, string PassengerFile)
 {
 	Passenger newPassenger;
@@ -2290,9 +2333,6 @@ int main()
 					else if (adminChoice == 3)
 					{
 						RemoveFlight(PlaneData, totalPlanes, PlaneFile);
-						EditPassengerTickets(PlaneData, totalPlanes, PassengerData, index);
-						InsertPassenger(PassengerData, totalPassengers, passengerFile);
-						InputPassengerData(PassengerData, totalPassengers, passengerFile);
 					}
 					else if (adminChoice == 4)
 						EditFlightDetails(PlaneData, totalPlanes,PlaneFile);
