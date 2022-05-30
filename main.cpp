@@ -553,6 +553,7 @@ int getChoice()
 	return choice;
 }
 
+
 int MainMenu()
 {
 	int choice = 0;
@@ -1980,6 +1981,28 @@ void DisplayPassengerDetails(Passenger* passenger, int& totalPassengers, string 
 		}
 	}
 }
+long long int getvalidpptno()
+{
+	int choice = 0;
+
+	cin >> choice;
+	while (!cin.good())
+	{
+		cout << "Invalid Input (Wrong Data Type)\n";
+		cin.clear();
+		cin.ignore(std::numeric_limits<long long int>::max(), '\n');
+		cout << "=>";
+		cin >> choice;
+	}
+	return choice;
+}
+long long int GetPassportNo()
+{
+	long long int tempPassportno = 0;
+	cout << "Enter Passort Number: \n";
+	tempPassportno = getvalidpptno();
+	return tempPassportno;
+}
 void DisplayPassengerDetails(Passenger* passenger, int& totalPassengers, long long int tempPassportNo)
 {
 
@@ -2011,7 +2034,6 @@ void DisplayPassengerDetails(Plane*& obj, int& totalPlanes, Passenger* passenger
 	
 	
 }
-
 
 
 int main()
