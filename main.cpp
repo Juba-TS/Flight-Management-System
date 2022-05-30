@@ -1856,7 +1856,7 @@ int GetFlightID(Plane*& obj, int& totalPlanes)
 void BookTickets(Plane*& obj, int& totalPlanes, const string fileName, long long int passportno)
 {
 	int flightNum = 0, flightIndex = -1;
-	//use search fliights instead
+	
 	DisplayFlights(obj, totalPlanes);
 	flightNum = GetFlightID(obj, totalPlanes);
 	flightIndex = returnFlightIndex(obj, totalPlanes, flightNum);
@@ -1969,6 +1969,49 @@ void DisplayPassengerDetails(Passenger* passenger, int& totalPassengers)
 		cout << passenger[i];
 	}
 }
+void DisplayPassengerDetails(Passenger* passenger, int& totalPassengers, string tempNationality)
+{
+	for (int i = 0; i < totalPassengers; i++)
+	{
+		if (passenger[i].GetNationality() == tempNationality)
+		{
+			cout << passenger[i] << endl;
+
+		}
+	}
+}
+void DisplayPassengerDetails(Passenger* passenger, int& totalPassengers, long long int tempPassportNo)
+{
+
+	for (int i = 0; i < totalPassengers; i++)
+	{
+		if (passenger[i].GetPassportNo() == tempPassportNo)
+		{
+			cout << passenger[i] << endl;
+			break;
+
+		}
+	}
+}
+void DisplayPassengerDetails(Plane*& obj, int& totalPlanes, Passenger* passenger, int& totalPassengers)
+{
+	int flightNum = 0, flightIndex = -1,tempTotalTickets=0;
+	Ticket* tempTickets = 0;
+	DisplayFlights(obj, totalPlanes);
+	flightNum = GetFlightID(obj, totalPlanes);
+	flightIndex = returnFlightIndex(obj, totalPlanes, flightNum);
+	tempTotalTickets = obj[flightIndex].getBookedTickets();
+	tempTickets = obj[flightIndex].getTickets();
+	
+	for (int i = 0; i < tempTotalTickets; i++)
+	{
+		DisplayPassengerDetails(passenger, totalPassengers, tempTickets[i].getPassportNumber());
+	}
+	system("pause");
+	
+	
+}
+
 
 
 int main()
@@ -1991,11 +2034,11 @@ int main()
 	InputPassengerData(PassengerData, totalPassengers, passengerFile);
 	InputPlaneData(PlaneData, totalPlanes, PlaneFile);
 
+	DisplayPassengerDetails(PlaneData, totalPlanes, PassengerData, totalPassengers);
 
 
 
-
-	DisplayFlights(PlaneData, totalPlanes);
+	//DisplayFlights(PlaneData, totalPlanes);
 
 
 	
