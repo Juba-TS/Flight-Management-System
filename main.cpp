@@ -599,6 +599,7 @@ int PassengerMenu()
 	cout << "2. Book a flight" << endl;
 	cout << "3. Edit your details (Passenger details)" << endl;
 	cout << "4. Search through flights" << endl;
+	cout << "5. Exit the menu" << endl;
 	cout << "=> ";
 	choice = getChoice();
 	return choice;
@@ -1069,6 +1070,33 @@ void DisplayFlights(Plane* obj, const int totalPlanes)
 		cout << "Arrival Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl << endl;
 	}
 }
+void DisplayAvailableFlights(Plane* obj, const int totalPlanes)
+{
+	system("CLS");
+	bool Found = false;
+	for (int counter = 0;counter < totalPlanes;counter++)
+	{
+		if (toupper(obj[counter].getStatusOfFlight()) != 'C' && obj[counter].getBookedTickets()<obj[counter].getAvailableTickets())
+		{
+			Time tempTime = obj[counter].getDepartureTime();
+			Date tempDate = obj[counter].getDate();
+			cout << "Available number of booked Tickets: " << obj[counter].getBookedTickets() << endl;
+			cout << "Available number of unbooked Tickets: " << obj[counter].getUnbookedTickets() << endl;
+			cout << "Flight Status: " << obj[counter].getStatusOfFlight() << endl;
+			cout << "Flight Number: " << obj[counter].getFlightNumber() << endl;
+			cout << "Flight Date: " << tempDate.day << "/" << tempDate.month << "/" << tempDate.year << endl;
+			cout << "Departure Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl;
+			tempTime = obj[counter].getArrivalTime();
+			cout << "Arrival Time: " << tempTime.hour << ":" << tempTime.minutes << ":" << tempTime.seconds << endl << endl;
+			Found = true;
+		}
+	}
+	if (!Found)
+	{
+		cout << "No available flights!" << endl;
+	}
+	system("pause");
+}
 void SearchFlights(Plane* obj, const int totalPlanes)
 {
 	system("CLS");
@@ -1327,6 +1355,7 @@ Ticket* SearchTicketIDs(Ticket* arrTicket, const int availableTickets, const int
 	}
 	return tempTicket;
 }
+
 //////////////////////////////////////////Haseeb's Functions end here///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1366,9 +1395,12 @@ bool CredentialsExist(Passenger* passenger, int& totalPassengers, long long int 
 	for (int i = 0; i < totalPassengers; i++)
 	{
 		if (passportNo == passenger[i].GetPassportNo())
+		{
 			credentialsExist = true;
+			break;
+		}
 
-		break;
+		
 	}
 	return credentialsExist;
 }
@@ -1455,7 +1487,7 @@ bool LoginPortal(Passenger* passenger, int totalPassengers, int& index)
 	{
 		isPassenger = true;
 		tempUser.SetPassengerName(passenger[index].GetPassengerName());
-		cout << system("CLS");
+		system("CLS");
 		cout << tempUser.GetPassengerName() << " Welcome to Flight Management System \n";
 		system("pause");
 
@@ -1536,13 +1568,14 @@ Passenger SignUp(Passenger* passenger, int& totalPassengers, string PassengerFil
 	long long int tempPassportNo;
 
 	char choice;
-
+	cin.ignore();
 	do
 	{
 		system("CLS");
-		cout << "Welcome to Passenger Sign Up Portal \n\n\n";
+		
+		cout << "Welcome to Passenger Sign Up Portal" << endl << endl << endl;
 		cout << "Username: ";
-		cin >> tempUsername;
+		getline(cin, tempUsername, '\n');
 
 
 		if (CredentialsExist(passenger, totalPassengers, tempUsername))
@@ -1562,15 +1595,15 @@ Passenger SignUp(Passenger* passenger, int& totalPassengers, string PassengerFil
 	}
 
 	cout << "\nPassword: ";
-	cin >> tempPassword;
+	getline(cin,tempPassword,'\n');
 	newPassenger.setPassword(tempPassword);
 
 	cout << "\nPassenger Name: ";
-	cin >> tempPassengerName;
+	getline(cin, tempPassengerName, '\n');
 	newPassenger.SetPassengerName(tempPassengerName);
 
 	cout << "\nNationality: ";
-	cin >> tempNationality;
+	getline(cin, tempNationality, '\n');
 	newPassenger.SetNationality(tempNationality);
 
 	do
@@ -1597,10 +1630,11 @@ Passenger SignUp(Passenger* passenger, int& totalPassengers, string PassengerFil
 void EditUsername(Passenger* passenger, int& totalPassengers, int index)
 {
 	string tempUsername;
+	cin.ignore();
 	do {
 		cout << "Enter New Username\n";
 		cout << "=>";
-		cin >> tempUsername;
+		getline(cin, tempUsername, '\n');
 
 		if (!CredentialsExist(passenger, totalPassengers, tempUsername))
 		{
@@ -1621,9 +1655,10 @@ void EditPassword(Passenger* passenger, int& totalPassengers, int index)
 {
 	string tempPassword;
 
+	cin.ignore();
 	cout << "Enter New Password\n";
 	cout << "=>";
-	cin >> tempPassword;
+	getline(cin, tempPassword,'\n');
 
 	passenger[index].setPassword(tempPassword);
 
@@ -1633,9 +1668,10 @@ void EditPassengerName(Passenger* passenger, int& totalPassengers, int index)
 {
 	string tempPassengerName;
 
+	cin.ignore();
 	cout << "Enter New PassengerName\n";
 	cout << "=>";
-	cin >> tempPassengerName;
+	getline(cin, tempPassengerName, '\n');
 
 	passenger[index].SetPassengerName(tempPassengerName);
 
@@ -1644,10 +1680,11 @@ void EditPassengerName(Passenger* passenger, int& totalPassengers, int index)
 void EditNationality(Passenger* passenger, int& totalPassengers, int index)
 {
 	string tempNationality;
-
+	
+	cin.ignore();
 	cout << "Enter New Nationality\n";
 	cout << "=>";
-	cin >> tempNationality;
+	getline(cin, tempNationality, '\n');
 
 	passenger[index].SetNationality(tempNationality);
 
@@ -1675,28 +1712,19 @@ void EditPassengerDetails(Passenger* passenger, int& totalPassengers, int index)
 	{
 		EditUsername(passenger, totalPassengers, index);
 	}
-	if (choice == 2)
+	else if (choice == 2)
 	{
 		EditPassword(passenger, totalPassengers, index);
 	}
-	if (choice == 3)
+	else if (choice == 3)
 	{
 		EditPassengerName(passenger, totalPassengers, index);
 	}
-	if (choice == 4)
+	else if(choice == 4)
 	{
 		EditNationality(passenger, totalPassengers, index);
 	}
-	//if (choice == 5)
-	//{
-	//	EditTotalTickets(passenger, totalPassengers, index);
-	//}
-	//if (choice == 6)
-	//{
-	//	EditTicketIDs(passenger, totalPassengers, index);
-	//}
-
-
+	system("pause");
 }
 bool TicketAvailable(Plane*& obj, int FlightNum, int ticketID)
 {
@@ -1766,7 +1794,7 @@ void InputFlightDetails(Plane*& obj, const int FlightNum, long long int passport
 	newArr[bookedTickets - 1] = tempTicket;
 	obj[FlightNum].setTicketArr(newArr);
 	cout << "\nCongratulations your flight is booked\n";
-
+	
 }
 bool FlightExists(Plane*& obj, int& totalPlanes, int flightNum)
 {
@@ -1807,7 +1835,7 @@ void BookTickets(Plane*& obj, int& totalPlanes, const string fileName, long long
 {
 	int flightNum = 0, flightIndex = -1;
 
-	DisplayFlights(obj, totalPlanes);
+	DisplayAvailableFlights(obj, totalPlanes);
 	flightNum = GetFlightID(obj, totalPlanes);
 	flightIndex = returnFlightIndex(obj, totalPlanes, flightNum);
 
@@ -1824,9 +1852,8 @@ void BookTickets(Plane*& obj, int& totalPlanes, const string fileName, long long
 	}
 	InputFlightDetails(obj, flightIndex, passportno);
 
-
+	system("pause");
 }
-
 int GetPassengerTickets(Plane*& obj, const int totalPlanes)
 {
 	int passengerTickets = 0;
@@ -1966,7 +1993,7 @@ int main()
 	bool isPassenger = false;
 	string passengerFile, PlaneFile;
 	int totalPassengers = 0, totalPlanes = 0;
-	int userchoice = 0, signInChoice = 0, choice3 = 0,adminChoice = 0, displayPassengerChoice=0;
+	int userchoice = 0, signInChoice = 0, passengerChoice = 0,adminChoice = 0, displayPassengerChoice=0;
 	Passenger newPassenger;
 	int index = -1;
 	Passenger* PassengerData;
@@ -2002,9 +2029,7 @@ int main()
 				else
 				{
 					if (adminChoice == 1)
-					{
 						SearchFlights(PlaneData, totalPlanes);
-					}
 					else if (adminChoice == 2)
 					{
 
@@ -2058,40 +2083,48 @@ int main()
 	else  if (userchoice == 2)
 	{
 		signInChoice = SignInMenu();
-		if (signInChoice == 1)
+		while (signInChoice >= 1 && signInChoice <= 2)
 		{
-			isPassenger = LoginPortal(PassengerData, totalPassengers, index);
-			if (isPassenger)
+			if (signInChoice == 1)
 			{
-				choice3 = PassengerMenu();
-				if (choice3 == 3)
+				isPassenger = LoginPortal(PassengerData, totalPassengers, index);
+				if (isPassenger)
 				{
-					EditPassengerDetails(PassengerData, totalPassengers, index);
-					InsertPassenger(PassengerData, totalPassengers, passengerFile);
-					InputPassengerData(PassengerData, totalPassengers, passengerFile);
-				}
-
-
-				else if (choice3 == 2)
-				{
-					long long int tempPassportNo = PassengerData[index].GetPassportNo();
-					BookTickets(PlaneData, totalPlanes, PlaneFile, tempPassportNo);
-					OutputPlaneData(PlaneData, totalPlanes, PlaneFile);
-					InputPlaneData(PlaneData, totalPlanes, PlaneFile);
-					EditPassengerTickets(PlaneData, totalPlanes, PassengerData, index);
-					InsertPassenger(PassengerData, totalPassengers, passengerFile);
-					InputPassengerData(PassengerData, totalPassengers, passengerFile);
+					passengerChoice = PassengerMenu();
+					while (passengerChoice >= 1 && passengerChoice <= 4)
+					{
+						if (passengerChoice == 1)
+							DisplayAvailableFlights(PlaneData, totalPlanes);
+						else if (passengerChoice == 2)
+						{
+							long long int tempPassportNo = PassengerData[index].GetPassportNo();
+							BookTickets(PlaneData, totalPlanes, PlaneFile, tempPassportNo);
+							OutputPlaneData(PlaneData, totalPlanes, PlaneFile);
+							InputPlaneData(PlaneData, totalPlanes, PlaneFile);
+							EditPassengerTickets(PlaneData, totalPlanes, PassengerData, index);
+							InsertPassenger(PassengerData, totalPassengers, passengerFile);
+							InputPassengerData(PassengerData, totalPassengers, passengerFile);
+						}
+						else if (passengerChoice == 3)
+						{
+							EditPassengerDetails(PassengerData, totalPassengers, index);
+							InsertPassenger(PassengerData, totalPassengers, passengerFile);
+							InputPassengerData(PassengerData, totalPassengers, passengerFile);
+						}
+						else
+							SearchFlights(PlaneData, totalPlanes);
+						passengerChoice = PassengerMenu();
+					}
 				}
 			}
-
-		}
-		else if (signInChoice == 2)
-		{
-			newPassenger = SignUp(PassengerData, totalPassengers, passengerFile);
-			InsertPassenger(PassengerData, totalPassengers, passengerFile, newPassenger);
-			InputPassengerData(PassengerData, totalPassengers, passengerFile);
-
-		}
+			else
+			{
+				newPassenger = SignUp(PassengerData, totalPassengers, passengerFile);
+				InsertPassenger(PassengerData, totalPassengers, passengerFile, newPassenger);
+				InputPassengerData(PassengerData, totalPassengers, passengerFile);
+			}
+			signInChoice = SignInMenu();
+		}		
 	}
 
 
